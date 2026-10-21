@@ -1,0 +1,151 @@
+// Prisma schema for the portfolio.
+// MongoDB Atlas.
+// Run `npm run setup` to create the database and seed demo content.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+/// Admin account used to sign in at /admin/login
+model User {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  email        String   @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime @default(now())
+  lastLoginAt  DateTime?
+  legacyId     String?
+}
+
+/// The owner of the portfolio (single row)
+model Profile {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @default("")
+  headline    String   @default("")
+  role        String   @default("")
+  tagline     String   @default("")
+  intro       String   @default("")
+  location    String   @default("")
+  status      String   @default("")
+  currentRole String   @default("")
+  company     String   @default("")
+  email       String   @default("")
+  phone       String   @default("")
+  bio         String   @default("")
+  approach    String   @default("")
+  education   String   @default("")
+  interests   String   @default("")
+  avatar      String   @default("")
+  resumeUrl   String   @default("")
+  yearsExp    String   @default("")
+  legacyId    String?
+}
+
+model Project {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  slug        String   @unique
+  title       String
+  summary     String   @default("")
+  overview    String   @default("")
+  problem     String   @default("")
+  approach    String   @default("")
+  datasetInfo String   @default("")
+  modelInfo   String   @default("")
+  results     String   @default("")
+  category    String   @default("Machine Learning")
+  status      String   @default("Completed")
+  date        String   @default("")
+  thumbnail   String   @default("")
+  videoUrl    String   @default("")
+  githubUrl   String   @default("")
+  liveUrl     String   @default("")
+  datasetUrl  String   @default("")
+  technologies String  @default("[]")
+  metrics      String  @default("[]")
+  gallery      String  @default("[]")
+  featured    Boolean  @default(false)
+  published   Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  legacyId    String?
+}
+
+model Experience {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  company      String
+  position     String   @default("")
+  location     String   @default("")
+  startDate    String   @default("")
+  endDate      String   @default("")
+  current      Boolean  @default(false)
+  description  String   @default("")
+  achievements String   @default("[]")
+  technologies String   @default("[]")
+  published    Boolean  @default(true)
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  legacyId     String?
+}
+
+model Skill {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  category  String   @default("Programming")
+  note      String   @default("")
+  highlight Boolean  @default(false)
+  published Boolean  @default(true)
+  order     Int      @default(0)
+  legacyId  String?
+}
+
+model GalleryItem {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  type        String   @default("photo") // photo | video
+  url         String
+  title       String   @default("")
+  description String   @default("")
+  category    String   @default("Photos")
+  date        String   @default("")
+  featured    Boolean  @default(false)
+  published   Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  legacyId    String?
+}
+
+/// platform: github | linkedin | instagram | x | youtube | leetcode | hackerrank | email | website | kaggle
+model SocialLink {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  platform String
+  label    String   @default("")
+  url      String
+  order    Int      @default(0)
+  enabled  Boolean  @default(true)
+  legacyId String?
+}
+
+/// Key/value store for every editable text on the site (see lib/defaults.ts)
+model Setting {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  key      String   @unique
+  value    String
+  legacyId String?
+}
+
+/// Contact form submissions — kept in the database so nothing is faked.
+model Message {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String
+  subject   String   @default("")
+  body      String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  legacyId  String?
+}

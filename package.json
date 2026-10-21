@@ -1,0 +1,36 @@
+{
+  "name": "harshraj-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Editorial Data Science / AI-ML portfolio with a built-in admin panel.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "db:push": "prisma db push",
+    "db:seed": "node database/seed.mjs",
+    "db:reset": "prisma db push --force-reset && npm run db:seed",
+    "setup": "prisma generate && prisma db push && npm run db:seed",
+    "assets": "node database/make-assets.mjs"
+  },
+  "prisma": {
+    "schema": "database/schema.prisma"
+  },
+  "dependencies": {
+    "@prisma/client": "6.19.3",
+    "bcryptjs": "3.0.3",
+    "lucide-react": "1.59.0",
+    "next": "15.5.28",
+    "react": "19.2.9",
+    "react-dom": "19.2.9"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "22.10.5",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "prisma": "6.19.3",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.7.3"
+  }
+}

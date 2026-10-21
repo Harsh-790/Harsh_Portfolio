@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1000" viewBox="0 0 1400 1000" role="img">
+  <rect width="1400" height="1000" fill="#FAFAF8"/>
+  <rect x="46" y="46" width="1308" height="908" fill="none" stroke="#E4E4DE" stroke-width="1.6"/>
+  <rect x="62" y="62" width="1276" height="876" fill="none" stroke="#E4E4DE" stroke-width="1"/>
+  <text x="700" y="300" font-family="ui-monospace, 'JetBrains Mono', 'SFMono-Regular', Menlo, Consolas, monospace" font-size="17" letter-spacing="6" fill="#75756E" text-anchor="middle">CERTIFICATE OF COMPLETION</text>
+  <line x1="520" y1="348" x2="880" y2="348" stroke="#141414" stroke-width="1.6"/>
+  <text x="700" y="470" font-family="ui-monospace, 'JetBrains Mono', 'SFMono-Regular', Menlo, Consolas, monospace" font-size="52" letter-spacing="3" fill="#141414" text-anchor="middle">DEEP LEARNING SPECIALISATION</text>
+  <text x="700" y="540" font-family="ui-monospace, 'JetBrains Mono', 'SFMono-Regular', Menlo, Consolas, monospace" font-size="19" letter-spacing="4.5" fill="#75756E" text-anchor="middle">COURSERA / DEEPLEARNING.AI</text>
+  <text x="700" y="800" font-family="ui-monospace, 'JetBrains Mono', 'SFMono-Regular', Menlo, Consolas, monospace" font-size="17" letter-spacing="4" fill="#75756E" text-anchor="middle">ISSUED 2024</text>
+  <path d="M110 850 h180 M1110 850 h180" stroke="#E4E4DE" stroke-width="1.4"/>
+  <text x="110" y="890" font-family="ui-monospace, 'JetBrains Mono', 'SFMono-Regular', Menlo, Consolas, monospace" font-size="15" letter-spacing="3" fill="#75756E">ISSUING BODY</text>
+  <text x="1290" y="890" font-family="ui-monospace, 'JetBrains Mono', 'SFMono-Regular', Menlo, Consolas, monospace" font-size="15" letter-spacing="3" fill="#75756E" text-anchor="end">CREDENTIAL ID</text>
+</svg>

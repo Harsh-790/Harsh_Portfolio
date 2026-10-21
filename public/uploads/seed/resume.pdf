@@ -1,0 +1,67 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Length 3167 >>
+stream
+BT 0 g /F2 30 Tf 56 773.89 Td (HARSH RAJ) Tj ET
+BT 0.35 g /F1 11 Tf 56 726.39 Td (DATA SCIENTIST / AI & ML) Tj ET
+BT 0.35 g /F1 9.5 Tf 56 706.44 Td (New Delhi, India  ·  hello@harshraj.dev  ·  github.com/harshraj) Tj ET
+0.75 w 0.82 G 56 694.66 m 539.28 694.66 l S
+BT 0.45 g /F1 8.5 Tf 56 666.66 Td (PROFILE) Tj ET
+BT 0.1 g /F1 10 Tf 56 644.34 Td (Data scientist with five years of practice across retail, healthcare and industrial data. Builds) Tj ET
+BT 0.1 g /F1 10 Tf 56 629.84 Td (systems rather than reports: pipelines, evaluation harnesses, monitoring and dashboards.) Tj ET
+BT 0.45 g /F1 8.5 Tf 56 593.34 Td (EXPERIENCE) Tj ET
+BT 0 g /F2 10.5 Tf 56 571.01 Td (Data Scientist  Northlane Analytics) Tj ET
+BT 0.4 g /F1 9 Tf 56 553.79 Td (Mar 2024  Present · New Delhi) Tj ET
+BT 0.25 g /F1 9.5 Tf 68 537.74 Td (Rebuilt the churn label definition and shipped a nightly scoring service \(+14% save rate\).) Tj ET
+BT 0.25 g /F1 9.5 Tf 68 522.96 Td (Set the team standard for model evaluation: rolling-origin validation and calibration checks.) Tj ET
+BT 0 g /F2 10.5 Tf 56 500.19 Td (Machine Learning Engineer \(Contract\)  Kitewave Labs) Tj ET
+BT 0.4 g /F1 9 Tf 56 482.96 Td (Jun 2023  Feb 2024 · Remote) Tj ET
+BT 0.25 g /F1 9.5 Tf 68 466.91 Td (Shipped hybrid retrieval over 12.4k documents with citation enforcement \(88% accuracy\).) Tj ET
+BT 0.25 g /F1 9.5 Tf 68 452.14 Td (Built the evaluation harness that gated every release; cut compliance inbox volume by 61%.) Tj ET
+BT 0 g /F2 10.5 Tf 56 429.36 Td (Data Analyst ’ Analytics Lead  Metrocommerce Retail) Tj ET
+BT 0.4 g /F1 9 Tf 56 412.14 Td (Jul 2022  May 2023 · Gurugram) Tj ET
+BT 0.25 g /F1 9.5 Tf 68 396.09 Td (Replaced a spreadsheet forecast with a global gradient-boosted model \(MAPE 24% ’ 8.4%\).) Tj ET
+BT 0.25 g /F1 9.5 Tf 68 381.31 Td (Led a three-person analytics team through the forecasting replacement project.) Tj ET
+BT 0 g /F2 10.5 Tf 56 358.54 Td (Research Intern  IIT Delhi, Vision & Learning Lab) Tj ET
+BT 0.4 g /F1 9 Tf 56 341.31 Td (Jan 2022  Jun 2022 · New Delhi) Tj ET
+BT 0.25 g /F1 9.5 Tf 68 325.26 Td (Contrastive pretraining pipeline: +9 points accuracy over a supervised baseline on 4k images.) Tj ET
+BT 0.45 g /F1 8.5 Tf 56 289.49 Td (SKILLS) Tj ET
+BT 0.25 g /F1 9.5 Tf 56 267.16 Td (Python · SQL · Pandas · NumPy · Scikit-learn · XGBoost / LightGBM · PyTorch) Tj ET
+BT 0.25 g /F1 9.5 Tf 56 252.39 Td (Computer vision · NLP & LLMs · Forecasting · Statistics · Docker · Airflow · MLflow · Power BI) Tj ET
+BT 0.45 g /F1 8.5 Tf 56 216.61 Td (SELECTED METRICS) Tj ET
+BT 0.25 g /F1 9.5 Tf 56 194.29 Td (Churn classifier 94.7% accuracy · Defect detection 96% recall at 38 ms · Forecast MAPE 8.4%) Tj ET
+BT 0.25 g /F1 9.5 Tf 56 179.51 Td (Document assistant 88% answer accuracy with citations on every response.) Tj ET
+BT 0.45 g /F1 8.5 Tf 56 143.74 Td (EDUCATION) Tj ET
+BT 0.25 g /F1 9.5 Tf 56 121.41 Td (B.Tech, Computer Science & Engineering  Delhi Technological University \(2020  2024\)) Tj ET
+BT 0.25 g /F1 9.5 Tf 56 106.64 Td (Deep Learning Specialisation \(DeepLearning.AI\) · Google Data Analytics · AWS ML Specialty) Tj ET
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000257 00000 n 
+0000000354 00000 n 
+0000000456 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+3675
+%%EOF
