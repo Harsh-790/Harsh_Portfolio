@@ -168,7 +168,7 @@ export default async function AdminDashboard() {
             </div>
             <div className="row justify-between">
               <dt className="label">Uploads</dt>
-              <dd className="text-[13px] text-fg">storage/uploads</dd>
+              <dd className="text-[13px] text-fg">MongoDB GridFS</dd>
             </div>
           </dl>
           <p className="field-hint mt-4">

@@ -1,5 +1,7 @@
 /* Shared types + tiny helpers. No abstractions beyond what the app needs. */
 
+import { isGridfsMediaUrl } from './media';
+
 export type Metric = { label: string; value: string; note?: string };
 export type Stat = { label: string; value: string; note?: string };
 
@@ -178,7 +180,9 @@ export function videoEmbedUrl(url: string): string | null {
 }
 
 export function isLocalVideo(url: string): boolean {
-  return /\.(mp4|webm|ogg|mov|m4v)(\?|$)/i.test(url) && !/^https?:/i.test(url);
+  // GridFS media URLs are extensionless, so callers that already know the field
+  // is a video (project demo, gallery video) can treat /api/media/<id> as local.
+  return (isGridfsMediaUrl(url) || /\.(mp4|webm|ogg|mov|m4v)(\?|$)/i.test(url)) && !/^https?:/i.test(url);
 }
 
 export function formatBytes(bytes: number): string {

@@ -67,7 +67,7 @@ lock you out of your own panel.
 | `npm run start`    | Serve the production build                                           |
 | `npm run setup`    | First-time setup: generate client, push schema, seed content         |
 | `npm run db:push`  | Apply `database/schema.prisma` to MongoDB (indexes; collections are created automatically) |
-| `npm run db:seed`  | Restore missing demo content in place — non-destructive: existing records are updated, never deleted; then check that every `/uploads/…` path in `content.json` exists |
+| `npm run db:seed`  | Restore missing demo content in place — non-destructive: existing records are updated, never deleted; then check that every `/uploads/seed/…` path in `content.json` exists |
 | `npm run db:reset` | **Destructive:** drop the database, recreate it and seed — do not run against live data |
 | `npm run assets`   | Regenerate the placeholder SVG figures and `resume.pdf`              |
 
@@ -98,19 +98,25 @@ on *Published*, so a half-written case study can't appear on the public site by 
 
 ### Media
 
-Uploads go to `storage/uploads/` and are served from `/uploads/…` by a route handler (JPG, PNG, WEBP,
-AVIF, GIF, SVG, MP4, WEBM, MOV, PDF · up to 24 MB) — new files are available immediately, without a
-server restart. The sample assets in `public/uploads/seed/` are listed in the library but read-only —
-replace them with your own uploads whenever you like. Nothing here generates duplicate copies: every
-form picks from the same library.
+Uploads are stored in MongoDB Atlas GridFS, in the dedicated `portfolioMedia` bucket, and served by
+`/api/media/<gridfs-object-id>`. The route streams files directly from GridFS, returns the stored
+`Content-Type` and `Content-Length`, and supports range requests so PDFs and `<video>` elements can
+seek. New files are available immediately, without a server restart, and every form picks from the
+same library. JPG, PNG, WEBP, AVIF, GIF, SVG, MP4, WEBM, MOV and PDF are accepted up to 24 MB.
 
-Video gallery items take a YouTube or Vimeo URL, or a local `.mp4`/`.webm` file. An embed URL is not an
-image, so those cards render a play-button placeholder panel instead of a broken `<img>` (a local file
-is shown as a muted `<video>` preview). The same rule applies inside the admin: a media picker previews
-images inline and shows a small labelled tile (`PDF`, `VIDEO`) for anything else, so a PDF résumé never
-renders as a broken image. `npm run db:seed` verifies that every `/uploads/…` path
-referenced by `content.json` exists and prints a warning for anything missing — a broken image should
-never ship silently.
+The sample assets in `public/uploads/seed/` are static bundled files, not uploaded copies. They are
+listed in the library as read-only and are kept in `public/` so a fresh install still has a complete
+demo site. The admin library only deletes GridFS files that are no longer referenced by a profile,
+project, gallery item or setting; replacing a reference cleans up the old GridFS file after the
+database update succeeds.
+
+Video gallery items take a YouTube or Vimeo URL, or a local uploaded video. An embed URL is not an
+image, so those cards render a play-button placeholder panel instead of a broken `<img>` (a GridFS
+video is shown as a muted `<video>` preview). The same rule applies inside the admin: a media picker
+previews images inline and shows a small labelled tile (`PDF`, `VIDEO`) for anything else, so a PDF
+résumé never renders as a broken image. `npm run db:seed` verifies that every static
+`/uploads/seed/…` path referenced by `content.json` exists and prints a warning for anything missing
+— a broken image should never ship silently.
 
 ## 4. Themes
 
@@ -167,15 +173,14 @@ middleware.ts          verifies the admin session before any admin page renders
 app/
   (site)/              public pages — home, about, projects, experience, skills, gallery, contact
   admin/               login + the guarded panel (one page per content type)
-  api/media/           upload / list / delete endpoint (session-guarded)
+  api/media/           upload / list / delete endpoint (session-guarded, GridFS-backed)
+  api/media/[id]/      streams a GridFS file with Content-Length and range support
   api/gullu/           portfolio assistant answers (public, rate-limited)
-  uploads/[...path]/   serves uploaded files from storage/uploads (range requests supported)
   globals.css          design tokens + component classes
 components/            site components (including the Gullu panel and brand icons), and components/admin/* for the panel
-lib/                   db client, auth, content queries, settings schema, the Gullu answer engine, helpers
+lib/                   db client, auth, GridFS storage, content queries, settings schema, the Gullu answer engine, helpers
 database/              schema.prisma · seed.mjs · content.json · make-assets.mjs
-public/uploads/seed/   read-only sample images and the placeholder résumé PDF
-storage/uploads/       files uploaded from the admin media library (served at /uploads/…)
+public/uploads/seed/   static bundled sample images and the placeholder résumé PDF
 ```
 
 To change the copy shipped with a fresh install, edit `database/content.json` and
@@ -201,14 +206,13 @@ is sent — if you want real delivery, add a provider (Resend, Postmark, SES…)
 **Any Node host (Railway, Fly.io, Render, a VPS):** set `DATABASE_URL` (MongoDB Atlas), `AUTH_SECRET`
 and `NEXT_PUBLIC_SITE_URL` in the environment. Set `ADMIN_EMAIL` / `ADMIN_PASSWORD` only for the
 initial seed — they create the first admin when the `User` collection is empty. Run
-`npx prisma generate && npm run db:seed` once, then `npm run build && npm run start`.
-Make sure `storage/uploads/` lives on a persistent volume — it is writable state. The database itself
-lives in MongoDB Atlas, so no database file needs to be persisted. Everything under
-`storage/uploads/` except `.gitkeep` is gitignored.
+`npx prisma generate && npm run db:seed` once, then `npm run build && npm run start`. Uploaded media
+lives in MongoDB Atlas GridFS, so no persistent disk or writable volume is required. The database and
+the uploaded files both survive redeploys.
 
-**Vercel:** the App Router build works as-is with MongoDB Atlas. Serverless filesystems are read-only
-and ephemeral, so move uploads to object storage before deploying there. Everything else — pages,
-server actions, auth — is portable.
+**Vercel:** the App Router build works as-is with MongoDB Atlas. Uploads are written to GridFS through
+the authenticated `/api/media` route, so serverless filesystems are not used for persistent media.
+Everything else — pages, server actions, auth — is portable.
 
 ## 9. Notes
 

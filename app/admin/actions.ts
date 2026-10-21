@@ -12,6 +12,13 @@ import { hash } from 'bcryptjs';
 import { db } from '@/lib/db';
 import { endSession, requireAdmin, startSession, verifyCredentials } from '@/lib/auth';
 import { DEFAULT_SETTINGS, SETTING_GROUPS } from '@/lib/schemas';
+import {
+  galleryMediaUrls,
+  profileMediaUrls,
+  projectMediaUrls,
+  releaseMediaUrls,
+  settingMediaUrls,
+} from '@/lib/media-references';
 import { lines, slugify, textToRows } from '@/lib/types';
 import { PROFILE_ID } from '@/lib/content';
 
@@ -103,6 +110,7 @@ export async function saveProfileAction(_prev: ActionState, formData: FormData):
 
   const name = str(formData, 'name');
   if (!name) return { ok: false, message: 'A display name is required.' };
+  const existing = await db.profile.findUnique({ where: { id: PROFILE_ID } });
 
   const data = {
     name,
@@ -126,6 +134,7 @@ export async function saveProfileAction(_prev: ActionState, formData: FormData):
   };
 
   await db.profile.upsert({ where: { id: PROFILE_ID }, update: data, create: { id: PROFILE_ID, ...data } });
+  await releaseMediaUrls(profileMediaUrls(existing));
   refresh();
   return { ok: true, message: 'Profile saved — the whole site has been updated.' };
 }
@@ -138,6 +147,7 @@ export async function saveProjectAction(_prev: ActionState, formData: FormData):
   const id = str(formData, 'id');
   const title = str(formData, 'title');
   if (!title) return { ok: false, message: 'A project title is required.' };
+  const existing = id ? await db.project.findUnique({ where: { id } }) : null;
 
   let slug = slugify(str(formData, 'slug') || title);
   if (!slug) slug = `project-${Date.now().toString(36)}`;
@@ -183,6 +193,7 @@ export async function saveProjectAction(_prev: ActionState, formData: FormData):
     savedId = created.id;
   }
 
+  await releaseMediaUrls(projectMediaUrls(existing));
   refresh();
   return { ok: true, message: id ? 'Project updated.' : 'Project created.', id: savedId };
 }
@@ -262,6 +273,7 @@ export async function saveGalleryAction(_prev: ActionState, formData: FormData):
   const id = str(formData, 'id');
   const url = str(formData, 'url');
   if (!url) return { ok: false, message: 'Add media first — the item needs a file or URL.' };
+  const existing = id ? await db.galleryItem.findUnique({ where: { id } }) : null;
 
   const data = {
     type: str(formData, 'type') === 'video' ? 'video' : 'photo',
@@ -284,6 +296,7 @@ export async function saveGalleryAction(_prev: ActionState, formData: FormData):
     savedId = created.id;
   }
 
+  await releaseMediaUrls(galleryMediaUrls(existing));
   refresh();
   return { ok: true, message: id ? 'Gallery item updated.' : 'Gallery item added.', id: savedId };
 }
@@ -350,19 +363,24 @@ export async function saveSettingsAction(_prev: ActionState, formData: FormData)
 
   if (updates.length === 0) return { ok: false, message: 'Nothing to save.' };
 
+  const existing = await db.setting.findMany({ where: { key: { in: updates.map((update) => update.key) } } });
+
   for (const update of updates) {
     await db.setting.upsert({ where: { key: update.key }, update: { value: update.value }, create: update });
   }
 
+  await releaseMediaUrls(existing.flatMap((row) => settingMediaUrls(row)));
   refresh();
   return { ok: true, message: `Saved ${updates.length} fields.` };
 }
 
 export async function resetSettingsAction(): Promise<void> {
   await requireAdmin();
+  const existing = await db.setting.findMany();
   for (const [key, value] of Object.entries(DEFAULT_SETTINGS)) {
     await db.setting.upsert({ where: { key }, update: { value }, create: { key, value } });
   }
+  await releaseMediaUrls(existing.flatMap((row) => settingMediaUrls(row)));
   refresh();
   redirect('/admin/settings?reset=1');
 }
@@ -420,8 +438,19 @@ export async function deleteMessageAction(formData: FormData): Promise<void> {
 
 export async function deleteRecordAction(formData: FormData): Promise<void> {
   await requireAdmin();
-  const target = model(str(formData, 'resource'));
-  await target.delete({ where: { id: str(formData, 'id') } });
+  const resource = str(formData, 'resource');
+  const id = str(formData, 'id');
+  const target = model(resource);
+
+  let oldMedia: string[] = [];
+  if (resource === 'projects') {
+    oldMedia = projectMediaUrls(await db.project.findUnique({ where: { id } }));
+  } else if (resource === 'gallery') {
+    oldMedia = galleryMediaUrls(await db.galleryItem.findUnique({ where: { id } }));
+  }
+
+  await target.delete({ where: { id } });
+  await releaseMediaUrls(oldMedia);
   refresh();
 }
 

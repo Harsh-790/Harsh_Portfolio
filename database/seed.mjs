@@ -212,7 +212,7 @@ async function main() {
 }
 
 /**
- * Every /uploads/... path in the seed content must exist on disk, otherwise the
+ * Every /uploads/seed/... path in the seed content must exist on disk, otherwise the
  * page renders a broken image and nothing else complains. Run `npm run assets`
  * to regenerate anything that is missing.
  */

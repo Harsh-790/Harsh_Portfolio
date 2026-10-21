@@ -1,117 +1,146 @@
 import { NextResponse } from 'next/server';
-import { mkdir, readdir, stat, unlink, writeFile } from 'node:fs/promises';
+import { Readable } from 'node:stream';
+import { randomUUID } from 'node:crypto';
+import { readdir, stat } from 'node:fs/promises';
 import { basename, extname, join } from 'node:path';
 import { getSessionUser } from '@/lib/auth';
+import { deleteMedia, findMediaById, listMedia, uploadMedia, type StoredMedia } from '@/lib/gridfs';
+import { isMediaReferenced } from '@/lib/media-references';
+import {
+  MAX_MEDIA_BYTES,
+  kindOfMime,
+  mediaUrlFor,
+  validateMediaFile,
+  type MediaEntry,
+} from '@/lib/media';
+import { isMongoObjectId } from '@/lib/object-id';
 import { slugify } from '@/lib/types';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 /**
  * Media library API — upload, list and delete files.
  *
- * Uploads live in `storage/uploads` (served by the /uploads/[...path] route)
- * rather than in `public/`, because Next only picks up new public files when
- * the production server starts. The sample assets in `public/uploads/seed`
- * are listed but protected from deletion.
+ * Uploaded files live in the MongoDB Atlas GridFS bucket "portfolioMedia" and
+ * are served by /api/media/[id]. The sample assets in public/uploads/seed are
+ * static bundled files: they remain read-only and are listed for reuse.
  */
 
-const UPLOAD_DIR = join(process.cwd(), 'storage', 'uploads');
 const SEED_DIR = join(process.cwd(), 'public', 'uploads', 'seed');
-const ALLOWED = new Set([
-  '.jpg', '.jpeg', '.png', '.webp', '.avif', '.gif', '.svg',
-  '.mp4', '.webm', '.ogg', '.mov', '.pdf',
-]);
-const MAX_BYTES = 24 * 1024 * 1024; // matches the server action body limit
 
-export type MediaEntry = {
-  name: string;
-  url: string;
-  size: number;
-  modified: number;
-  kind: 'image' | 'video' | 'file';
-  protected: boolean;
-};
-
-function kindOf(ext: string): MediaEntry['kind'] {
-  if (['.jpg', '.jpeg', '.png', '.webp', '.avif', '.gif', '.svg'].includes(ext)) return 'image';
-  if (['.mp4', '.webm', '.ogg', '.mov'].includes(ext)) return 'video';
-  return 'file';
+function toEntry(file: StoredMedia): MediaEntry {
+  return {
+    id: file.id,
+    name: file.originalFilename,
+    url: mediaUrlFor(file.id),
+    size: file.size,
+    modified: file.uploadedAt.getTime(),
+    kind: file.kind,
+    protected: false,
+    contentType: file.contentType,
+  };
 }
 
-async function entriesIn(dir: string, prefix = '', isProtected = false): Promise<MediaEntry[]> {
+async function gridEntries(): Promise<MediaEntry[]> {
+  return (await listMedia()).map(toEntry);
+}
+
+async function seedEntries(): Promise<MediaEntry[]> {
   try {
-    const names = await readdir(dir);
-    const entries = await Promise.all(
+    const names = await readdir(SEED_DIR);
+    const entries = await Promise.all<MediaEntry | null>(
       names.map(async (name) => {
-        const full = join(dir, name);
+        if (name.startsWith('.')) return null;
+        const full = join(SEED_DIR, name);
         const info = await stat(full);
         if (!info.isFile()) return null;
-        if (name.startsWith('.')) return null;
-        const ext = extname(name).toLowerCase();
-        if (!ALLOWED.has(ext)) return null;
+
+        const validation = validateMediaFile(name, '');
+        if (!validation.ok) return null;
+
         return {
-          name: `${prefix}${name}`,
-          url: `/uploads/${prefix}${name}`,
+          name: `seed/${name}`,
+          url: `/uploads/seed/${encodeURIComponent(name)}`,
           size: info.size,
           modified: info.mtimeMs,
-          kind: kindOf(ext),
-          protected: isProtected,
+          kind: kindOfMime(validation.contentType),
+          protected: true,
+          contentType: validation.contentType,
         } satisfies MediaEntry;
       }),
     );
+
     return entries.filter((entry): entry is MediaEntry => entry !== null);
   } catch {
     return [];
   }
 }
 
-async function listMedia(): Promise<MediaEntry[]> {
-  const [root, seed] = await Promise.all([entriesIn(UPLOAD_DIR), entriesIn(SEED_DIR, 'seed/', true)]);
-  return [...root, ...seed].sort((a, b) => b.modified - a.modified);
-}
-
 export async function GET() {
   const user = await getSessionUser();
   if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
-  return NextResponse.json({ files: await listMedia() });
+
+  try {
+    const [grid, seed] = await Promise.all([gridEntries(), seedEntries()]);
+    return NextResponse.json({
+      files: [...grid, ...seed].sort((a, b) => b.modified - a.modified),
+    });
+  } catch (error) {
+    console.error('Could not list media:', error);
+    return NextResponse.json({ error: 'Could not load the media library.' }, { status: 500 });
+  }
 }
 
 export async function POST(request: Request) {
   const user = await getSessionUser();
   if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
 
-  const form = await request.formData();
-  const file = form.get('file');
+  let form: FormData;
+  try {
+    form = await request.formData();
+  } catch {
+    return NextResponse.json({ error: 'Invalid upload request.' }, { status: 400 });
+  }
 
+  const file = form.get('file');
   if (!(file instanceof File) || file.size === 0) {
     return NextResponse.json({ error: 'No file received.' }, { status: 400 });
   }
-  if (file.size > MAX_BYTES) {
+  if (file.size > MAX_MEDIA_BYTES) {
     return NextResponse.json({ error: 'That file is larger than 24 MB.' }, { status: 413 });
   }
 
-  const ext = extname(file.name).toLowerCase();
-  if (!ALLOWED.has(ext)) {
-    return NextResponse.json(
-      { error: 'Allowed: JPG, PNG, WEBP, AVIF, GIF, SVG, MP4, WEBM, MOV, PDF.' },
-      { status: 415 },
-    );
+  const originalFilename =
+    basename(file.name || 'file')
+      .replace(/[\u0000-\u001f\u007f]/g, '')
+      .slice(0, 180) || 'file';
+  const validation = validateMediaFile(originalFilename, file.type);
+  if (!validation.ok) {
+    return NextResponse.json({ error: validation.reason }, { status: 415 });
   }
 
-  const base = slugify(basename(file.name, ext)).slice(0, 42) || 'file';
-  const name = `${Date.now().toString(36)}-${base}${ext}`;
+  const base = slugify(basename(originalFilename, extname(originalFilename))).slice(0, 42) || 'file';
+  const filename = `${Date.now().toString(36)}-${randomUUID().slice(0, 8)}-${base}${validation.extension}`;
+  const category = String(form.get('category') ?? '').trim().slice(0, 60) || kindOfMime(validation.contentType);
 
-  await mkdir(UPLOAD_DIR, { recursive: true });
-  await writeFile(join(UPLOAD_DIR, name), Buffer.from(await file.arrayBuffer()));
-
-  return NextResponse.json({
-    file: {
-      name,
-      url: `/uploads/${name}`,
+  try {
+    const source = Readable.fromWeb(
+      file.stream() as unknown as import('node:stream/web').ReadableStream<Uint8Array>,
+    );
+    const stored = await uploadMedia(source, {
+      filename,
+      originalFilename,
+      contentType: validation.contentType,
       size: file.size,
-      modified: Date.now(),
-      kind: kindOf(ext),
-      protected: false,
-    } satisfies MediaEntry,
-  });
+      category,
+    });
+
+    return NextResponse.json({ file: toEntry(stored) });
+  } catch (error) {
+    console.error('Media upload failed:', error);
+    return NextResponse.json({ error: 'The file could not be stored. Nothing was changed.' }, { status: 500 });
+  }
 }
 
 export async function DELETE(request: Request) {
@@ -119,23 +148,29 @@ export async function DELETE(request: Request) {
   if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 });
 
   const body = await request.json().catch(() => null);
-  const name = typeof body?.name === 'string' ? body.name : '';
+  const id = typeof body?.id === 'string' ? body.id : '';
 
-  // only plain file names inside the uploads directory may be deleted
-  if (!/^[a-zA-Z0-9._-]+\.[a-zA-Z0-9]+$/.test(name)) {
-    return NextResponse.json({ error: 'Invalid file name.' }, { status: 400 });
-  }
-
-  const target = join(UPLOAD_DIR, name);
-  if (!target.startsWith(UPLOAD_DIR)) {
-    return NextResponse.json({ error: 'Invalid path.' }, { status: 400 });
+  if (!isMongoObjectId(id)) {
+    return NextResponse.json({ error: 'A valid media id is required.' }, { status: 400 });
   }
 
   try {
-    await unlink(target);
-  } catch {
-    return NextResponse.json({ error: 'File not found.' }, { status: 404 });
-  }
+    const file = await findMediaById(id);
+    if (!file) return NextResponse.json({ error: 'File not found.' }, { status: 404 });
 
-  return NextResponse.json({ ok: true });
+    if (await isMediaReferenced(id)) {
+      return NextResponse.json(
+        { error: 'This file is still used on the site. Replace or remove those references first.' },
+        { status: 409 },
+      );
+    }
+
+    const deleted = await deleteMedia(id);
+    if (!deleted) return NextResponse.json({ error: 'File not found.' }, { status: 404 });
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error('Media delete failed:', error);
+    return NextResponse.json({ error: 'The file could not be deleted.' }, { status: 500 });
+  }
 }

@@ -71,10 +71,10 @@ export function MediaLibrary() {
   }
 
   async function handleDelete(entry: MediaEntry) {
-    if (!window.confirm(`Delete ${entry.name}? Pages already using it will show a broken image.`)) return;
+    if (!window.confirm(`Delete ${entry.name}? If it is still used, deletion is blocked.`)) return;
     setNotice('');
     setBusy(entry.name);
-    const ok = await remove(entry.name);
+    const ok = await remove(entry);
     setBusy('');
     if (ok) setNotice(`Deleted ${entry.name}.`);
   }
@@ -86,8 +86,9 @@ export function MediaLibrary() {
           <div>
             <h2 className="display text-[15px]">Upload</h2>
             <p className="mt-2 max-w-[62ch] text-[12.5px] leading-relaxed text-muted">
-              JPG, PNG, WEBP, AVIF, GIF, SVG, MP4, WEBM, MOV or PDF · up to 24 MB each. Files are saved to{' '}
-              <span className="label-fg">storage/uploads</span> and can be reused in every content form.
+              JPG, PNG, WEBP, AVIF, GIF, SVG, MP4, WEBM, MOV or PDF · up to 24 MB each. Files are stored in the
+              MongoDB GridFS bucket <span className="label-fg">portfolioMedia</span> and can be reused in every
+              content form.
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -203,7 +204,7 @@ export function MediaLibrary() {
           ) : (
             <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
               {visible.map((entry) => (
-                <li key={entry.name} className="flex flex-col overflow-hidden rounded-xl border border-line">
+                <li key={entry.id ?? entry.name} className="flex flex-col overflow-hidden rounded-xl border border-line">
                   <a
                     href={entry.url}
                     target="_blank"

@@ -331,19 +331,6 @@ function portrait() {
 
 writeFileSync(join(OUT, 'portrait.svg'), portrait());
 
-/* small square avatar framing of the same silhouette */
-writeFileSync(
-  join(OUT, 'avatar.svg'),
-  `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600" role="img">
-  <rect width="600" height="600" fill="${PALETTES.paper.bg}"/>
-  <circle cx="300" cy="232" r="96" fill="#2B2B2B"/>
-  <rect x="222" y="196" width="156" height="36" rx="3" fill="#101010"/>
-  <path d="M96 600c0-118 62-206 152-236 35-12 40-14 52-14s17 2 52 14c90 30 152 118 152 236z" fill="#2B2B2B"/>
-  <rect x="18" y="18" width="564" height="564" fill="none" stroke="${PALETTES.paper.line}" stroke-width="1.4"/>
-</svg>
-`,
-);
-
 /* placeholder résumé (real, openable one-page PDF — replace via /admin/profile) */
 function resumePdf() {
   const W = 595.28;

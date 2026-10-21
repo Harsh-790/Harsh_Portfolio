@@ -3,16 +3,10 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useFormStatus } from 'react-dom';
 import { CircleAlert, CircleCheck, Eraser, LoaderCircle, Plus, Search, Upload, X } from 'lucide-react';
+import { isGridfsMediaUrl, kindOfMime, type MediaEntry } from '@/lib/media';
 import { cn, formatBytes, videoEmbedUrl } from '@/lib/types';
 
-export type MediaEntry = {
-  name: string;
-  url: string;
-  size: number;
-  modified: number;
-  kind: 'image' | 'video' | 'file';
-  protected: boolean;
-};
+export type { MediaEntry } from '@/lib/media';
 
 /* ── basic inputs ──────────────────────────────────────────── */
 
@@ -259,19 +253,23 @@ export function useMediaLibrary() {
     }
   };
 
-  const remove = async (name: string) => {
+  const remove = async (file: MediaEntry) => {
     setError('');
+    if (!file.id) {
+      setError('Sample assets are read-only.');
+      return false;
+    }
     const response = await fetch('/api/media', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({ id: file.id }),
     });
     if (!response.ok) {
       const data = await response.json().catch(() => null);
       setError(data?.error || 'Could not delete that file.');
       return false;
     }
-    setFiles((current) => current.filter((file) => file.name !== name));
+    setFiles((current) => current.filter((entry) => entry.id !== file.id));
     return true;
   };
 
@@ -298,9 +296,9 @@ export function MediaThumb({ entry, className }: { entry: MediaEntry; className?
 }
 
 /**
- * What a media URL will render as. Only URLs with a known non-image extension
- * (a PDF résumé, for instance) are treated as files — extension-less URLs keep
- * the old behaviour and are attempted as images.
+ * Fallback preview kind for URLs with a known extension. GridFS URLs are
+ * extensionless and are resolved by the HEAD request in MediaPicker; this is
+ * used for static/legacy/external URLs.
  */
 function previewKind(url: string): 'image' | 'video' | 'file' {
   const ext = (url.split(/[?#]/)[0].split('.').pop() || '').toLowerCase();
@@ -338,12 +336,47 @@ export function MediaPicker({
   const [value, setValue] = useState(defaultValue);
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [detected, setDetected] = useState<{ kind: 'image' | 'video' | 'file'; label: string } | null>(null);
   const { files, loading, error, uploading, load, upload, remove } = useMediaLibrary();
   const inputRef = useRef<HTMLInputElement>(null);
+
+  /*
+   * GridFS URLs are extensionless. Ask the media route for the stored
+   * Content-Type so a PDF or video does not render as a broken image tile.
+   */
+  useEffect(() => {
+    setDetected(null);
+    if (!isGridfsMediaUrl(value)) return;
+
+    const controller = new AbortController();
+    fetch(value, { method: 'HEAD', signal: controller.signal })
+      .then((response) => {
+        const contentType = (response.headers.get('content-type') || '').split(';')[0].trim().toLowerCase();
+        if (!response.ok || !contentType) return;
+        const kind = kindOfMime(contentType);
+        const label =
+          contentType === 'application/pdf'
+            ? 'PDF'
+            : kind === 'video'
+              ? 'VIDEO'
+              : kind === 'file'
+                ? 'FILE'
+                : 'IMAGE';
+        setDetected({ kind, label });
+      })
+      .catch(() => {
+        // A missing preview does not block editing; the URL stays editable.
+      });
+
+    return () => controller.abort();
+  }, [value]);
 
   useEffect(() => {
     if (open) void load();
   }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const displayKind = detected?.kind ?? previewKind(value);
+  const displayLabel = detected?.label ?? previewLabel(value);
 
   const visible = files.filter((file) =>
     (allowVideo ? true : file.kind === 'image') &&
@@ -358,12 +391,12 @@ export function MediaPicker({
       <div className="flex flex-col gap-3 sm:flex-row">
         <div className="h-[86px] w-[118px] shrink-0 overflow-hidden rounded-xl border border-line bg-bg2">
           {value ? (
-            previewKind(value) === 'image' ? (
+            displayKind === 'image' ? (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img src={value} alt="" className="h-full w-full object-cover" />
             ) : (
               <div className="flex h-full items-center justify-center">
-                <span className="label">{previewLabel(value)}</span>
+                <span className="label">{displayLabel}</span>
               </div>
             )
           ) : (
@@ -401,7 +434,7 @@ export function MediaPicker({
           <input
             value={value}
             onChange={(event) => setValue(event.target.value)}
-            placeholder="/uploads/file.jpg or https://…"
+            placeholder="/api/media/… or https://…"
             className="field mt-2.5"
             aria-label={`${label} URL`}
           />
@@ -469,7 +502,7 @@ export function MediaPicker({
                 <p className="body col-span-full py-8 text-center text-[13px]">No files yet — upload one.</p>
               )}
               {visible.map((file) => (
-                <div key={file.name} className="group relative">
+                <div key={file.id ?? file.name} className="group relative">
                   <button
                     type="button"
                     onClick={() => {
@@ -487,8 +520,9 @@ export function MediaPicker({
                     <button
                       type="button"
                       onClick={async () => {
-                        if (window.confirm(`Delete ${file.name}? Files already used on the site will break.`)) {
-                          await remove(file.name);
+                        if (window.confirm(`Delete ${file.name}? If it is still used, deletion is blocked.`)) {
+                          const removed = await remove(file);
+                          if (removed && value === file.url) setValue('');
                         }
                       }}
                       aria-label={`Delete ${file.name}`}
@@ -637,7 +671,7 @@ export function MediaListField({
               )}
               {visible.map((file) => (
                 <button
-                  key={file.name}
+                  key={file.id ?? file.name}
                   type="button"
                   onClick={() => {
                     setValues((current) => [...current, file.url]);
