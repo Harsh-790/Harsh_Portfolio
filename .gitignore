@@ -1,15 +1,31 @@
-node_modules
-.next
-out
-build
-.DS_Store
-*.pem
-*.log
-_tmp*
-npm-debug.log*
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Next.js
+.next/
+**/.next/
+out/
+**/out/
+next-env.d.ts
+
+# Build output
+dist/
+**/dist/
+*.tsbuildinfo
+
+# Local environment files (keep the examples)
 .env
 .env.*
+**/.env
+**/.env.*
 !.env.example
-.env*.local
-next-env.d.ts
-tsconfig.tsbuildinfo
+!**/.env.example
+
+# Logs and OS files
+*.log
+npm-debug.log*
+.DS_Store
+
+# Temporary files
+_tmp*

@@ -1,0 +1,29 @@
+{
+  "name": "harshraj-portfolio-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Next.js frontend for the Harsh Raj portfolio. All data, auth, media and Gullu logic lives in the Express backend.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "dependencies": {
+    "lucide-react": "1.59.0",
+    "next": "15.5.28",
+    "react": "19.2.9",
+    "react-dom": "19.2.9"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "22.10.5",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.7.3"
+  }
+}
