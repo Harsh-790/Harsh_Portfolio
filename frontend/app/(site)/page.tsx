@@ -20,27 +20,23 @@ import {
   getGallery,
   getProfile,
   getProjects,
+  getSettings,
   getSkills,
   getSocialLinks,
-} from '@/lib/content';
-import { getSettings, parseStats } from '@/lib/settings';
+} from '@/lib/public-content';
+import { parseStats } from '@/lib/settings';
 import { cn, commaList, pad } from '@/lib/types';
 
-export const dynamic = 'force-dynamic';
-
-export default async function HomePage() {
-  const [profile, featured, allProjects, experience, skills, gallery, socials, settings, categories] =
-    await Promise.all([
-      getProfile(),
-      getProjects({ featuredOnly: true, limit: 3 }),
-      getProjects(),
-      getExperience(4),
-      getSkills(),
-      getGallery({ limit: 6 }),
-      getSocialLinks(),
-      getSettings(),
-      getCategories(),
-    ]);
+export default function HomePage() {
+  const profile = getProfile();
+  const featured = getProjects({ featuredOnly: true, limit: 3 });
+  const allProjects = getProjects();
+  const experience = getExperience(4);
+  const skills = getSkills();
+  const gallery = getGallery({ limit: 6 });
+  const socials = getSocialLinks();
+  const settings = getSettings();
+  const categories = getCategories();
 
   const s = (key: string) => settings[key] ?? '';
   const stats = parseStats(settings['home.stats']);

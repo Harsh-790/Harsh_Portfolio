@@ -4,7 +4,7 @@ import { Badge, EmptyState, PageHead, Panel, RowActions, SavedNote } from '@/com
 import { PlatformIcon } from '@/components/BrandIcons';
 import { SocialForm } from '@/components/admin/ContentForms';
 import { requireAdmin } from '@/lib/auth';
-import { getSocialLinks } from '@/lib/content';
+import { getAdminSocialLinks } from '@/lib/content';
 import { SOCIAL_PLATFORMS } from '@/lib/options';
 import { pad } from '@/lib/types';
 
@@ -17,7 +17,7 @@ export default async function AdminSocialPage({
 }) {
   await requireAdmin();
   const params = await searchParams;
-  const links = await getSocialLinks(false);
+  const links = await getAdminSocialLinks();
 
   const isNew = params.edit === 'new';
   const editing = params.edit && !isNew ? links.find((link) => link.id === params.edit) ?? null : null;

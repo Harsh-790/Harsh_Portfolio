@@ -3,14 +3,11 @@ import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import Reveal from '@/components/Reveal';
 import { TagList } from '@/components/ui';
-import { getExperience, getProfile } from '@/lib/content';
-import { getSettings } from '@/lib/settings';
+import { getExperience, getProfile, getSettings } from '@/lib/public-content';
 import { pad } from '@/lib/types';
 
-export const dynamic = 'force-dynamic';
-
-export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSettings();
+export function generateMetadata(): Metadata {
+  const settings = getSettings();
   return {
     title: 'Experience',
     description: settings['page.experience.lead'],
@@ -18,8 +15,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function ExperiencePage() {
-  const [experience, profile, settings] = await Promise.all([getExperience(), getProfile(), getSettings()]);
+export default function ExperiencePage() {
+  const experience = getExperience();
+  const profile = getProfile();
+  const settings = getSettings();
 
   const companies = new Set(experience.map((e) => e.company));
   const current = experience.find((e) => e.current);

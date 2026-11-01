@@ -2,7 +2,7 @@
   "name": "harshraj-portfolio-frontend",
   "version": "1.0.0",
   "private": true,
-  "description": "Next.js frontend for the Harsh Raj portfolio. All data, auth, media and Gullu logic lives in the Express backend.",
+  "description": "Next.js frontend for the Harsh Raj portfolio. Public pages render from a committed snapshot; admin, media fallbacks and Gullu use the Express backend.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

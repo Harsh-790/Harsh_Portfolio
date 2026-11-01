@@ -1,6 +1,5 @@
 import { ImageResponse } from 'next/og';
-import { getProfile } from '@/lib/content';
-import { getSettings } from '@/lib/settings';
+import { getProfile, getSettings } from '@/lib/public-content';
 
 /**
  * Share card used for Open Graph / Twitter previews. Rendered with next/og so
@@ -18,8 +17,9 @@ const INK = '#0e0e0f';
 const MUTED = '#6c6c70';
 const LINE = '#e5e5df';
 
-export default async function OpengraphImage() {
-  const [profile, settings] = await Promise.all([getProfile(), getSettings()]);
+export default function OpengraphImage() {
+  const profile = getProfile();
+  const settings = getSettings();
   const accent = settings['theme.accent'] || '#6F2D18';
 
   return new ImageResponse(

@@ -7,6 +7,21 @@ import { adminRouter } from './routes/admin';
 import { gulluRouter } from './routes/gullu';
 import { adminMediaRouter, publicMediaRouter } from './routes/media';
 
+/**
+ * Atlas outages surface as Prisma raw-query failures or native Mongo driver
+ * errors. Turn those into a clean 503 instead of a generic 500/stack trace.
+ */
+function isDatabaseUnavailable(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+  const record = error as { name?: unknown; code?: unknown; message?: unknown };
+
+  if (record.name === 'MongoServerSelectionError' || record.name === 'MongoNetworkError') return true;
+  if (record.code === 'P1001' || record.code === 'P1008' || record.code === 'P1017') return true;
+
+  const message = typeof record.message === 'string' ? record.message : '';
+  return /Server selection timeout|No available servers|received fatal alert|Can't reach database server/i.test(message);
+}
+
 export function createApp() {
   const app = express();
   app.disable('x-powered-by');
@@ -37,9 +52,15 @@ export function createApp() {
   app.use(express.json({ limit: '2mb' }));
   app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 
-  app.get('/api/health', (_req, res) => {
-    res.json({ ok: true });
-  });
+  const health = (_req: Request, res: Response) => {
+    res.set('Cache-Control', 'no-store');
+    res.json({ status: 'ok' });
+  };
+
+  // Render health checks and uptime monitors use /health. The API-prefixed
+  // aliases stay for older clients.
+  app.get('/health', health);
+  app.get('/api/health', health);
 
   app.use('/api/auth', authRouter);
   app.use('/api/public', publicRouter);
@@ -63,6 +84,18 @@ export function createApp() {
         return;
       }
       res.status(400).json({ error: 'The upload could not be processed.' });
+      return;
+    }
+
+    if (isDatabaseUnavailable(error)) {
+      console.error(
+        'API database unavailable:',
+        error instanceof Error ? error.message.split('\n')[0] : error,
+      );
+      if (!res.headersSent) {
+        res.set('Retry-After', '15');
+        res.status(503).json({ error: 'The database is temporarily unavailable. Please try again shortly.' });
+      }
       return;
     }
 

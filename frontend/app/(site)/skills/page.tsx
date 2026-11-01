@@ -2,14 +2,11 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import Reveal from '@/components/Reveal';
-import { getSkills } from '@/lib/content';
-import { getSettings } from '@/lib/settings';
+import { getSettings, getSkills } from '@/lib/public-content';
 import { cn, pad } from '@/lib/types';
 
-export const dynamic = 'force-dynamic';
-
-export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSettings();
+export function generateMetadata(): Metadata {
+  const settings = getSettings();
   return {
     title: 'Skills',
     description: settings['page.skills.lead'],
@@ -17,8 +14,9 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function SkillsPage() {
-  const [groups, settings] = await Promise.all([getSkills(), getSettings()]);
+export default function SkillsPage() {
+  const groups = getSkills();
+  const settings = getSettings();
   const total = groups.reduce((sum, group) => sum + group.items.length, 0);
   const highlighted = groups.reduce(
     (sum, group) => sum + group.items.filter((item) => item.highlight).length,

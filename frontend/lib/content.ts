@@ -1,4 +1,4 @@
-import { ApiError, adminJson, backendJson } from './api';
+import { adminJson } from './api';
 import {
   jsonArray,
   lines,
@@ -8,13 +8,18 @@ import {
   type Profile,
   type Project,
   type Skill,
+  type Settings,
   type SocialLink,
 } from './types';
 
-/** Fixed ObjectId for the single profile document. */
-export const PROFILE_ID = '507f1f77bcf86cd799439011';
+/**
+ * Admin-only data access. Public pages use lib/public-content.ts and never load
+ * anything from the API. These functions are called by authenticated admin
+ * pages and server actions, so a sleeping backend only affects the panel.
+ */
 
-/* ── row → view model (kept for admin form props) ──────────── */
+/** Fixed ObjectId for the single profile document (admin forms use it). */
+export const PROFILE_ID = '507f1f77bcf86cd799439011';
 
 type ProjectRow = {
   id: string; slug: string; title: string; summary: string; overview: string;
@@ -61,105 +66,37 @@ export function sortByCategory<T extends { category: string }>(items: T[]): T[] 
   });
 }
 
-/* ── public reads (frontend → Express API) ─────────────────── */
-
-export async function getProfile(): Promise<Profile> {
-  return backendJson<Profile>('/api/public/profile');
-}
-
-export type ProjectQuery = {
-  featuredOnly?: boolean;
-  includeDrafts?: boolean;
-  category?: string;
-  limit?: number;
-};
-
-export async function getProjects(query: ProjectQuery = {}): Promise<Project[]> {
-  if (query.includeDrafts) {
-    const all = await adminJson<Project[]>('/api/admin/projects');
-    let rows = all;
-    if (query.featuredOnly) rows = rows.filter((project) => project.featured);
-    if (query.category && query.category !== 'All') {
-      rows = rows.filter((project) => project.category === query.category);
-    }
-    return query.limit ? rows.slice(0, query.limit) : rows;
-  }
-
-  const params = new URLSearchParams();
-  if (query.featuredOnly) params.set('featured', 'true');
-  if (query.category && query.category !== 'All') params.set('category', query.category);
-  if (query.limit) params.set('limit', String(query.limit));
-  const suffix = params.size > 0 ? `?${params.toString()}` : '';
-  return backendJson<Project[]>(`/api/public/projects${suffix}`);
-}
-
-export async function getProjectBySlug(slug: string): Promise<Project | null> {
-  try {
-    return await backendJson<Project>(`/api/public/projects/${encodeURIComponent(slug)}`);
-  } catch (error) {
-    if (error instanceof ApiError && error.status === 404) return null;
-    throw error;
-  }
-}
-
-export async function getProjectById(id: string): Promise<Project | null> {
-  const rows = await adminJson<Project[]>('/api/admin/projects');
-  return rows.find((project) => project.id === id) ?? null;
-}
-
-/** Related = same category first, then anything else, excluding the current project. */
-export async function getRelatedProjects(project: Project, take = 3): Promise<Project[]> {
-  const all = await getProjects();
-  const filtered = all.filter((item) => item.id !== project.id);
-  const sameCategory = filtered.filter((item) => item.category === project.category);
-  const rest = filtered.filter((item) => item.category !== project.category);
-  return [...sameCategory, ...rest].slice(0, take);
-}
-
-export async function getCategories(): Promise<{ name: string; count: number }[]> {
-  return backendJson<{ name: string; count: number }[]>('/api/public/categories');
-}
-
-export async function getExperience(limit?: number): Promise<Experience[]> {
-  const suffix = limit ? `?limit=${limit}` : '';
-  return backendJson<Experience[]>(`/api/public/experience${suffix}`);
-}
-
-export async function getSkills(): Promise<{ category: string; items: Skill[] }[]> {
-  return backendJson<{ category: string; items: Skill[] }[]>('/api/public/skills');
-}
-
-export type GalleryQuery = { featuredOnly?: boolean; limit?: number; category?: string };
-
-export async function getGallery(query: GalleryQuery = {}): Promise<GalleryItem[]> {
-  const params = new URLSearchParams();
-  if (query.featuredOnly) params.set('featured', 'true');
-  if (query.category && query.category !== 'All') params.set('category', query.category);
-  if (query.limit) params.set('limit', String(query.limit));
-  const suffix = params.size > 0 ? `?${params.toString()}` : '';
-  return backendJson<GalleryItem[]>(`/api/public/gallery${suffix}`);
-}
-
-export async function getGalleryCategories(): Promise<string[]> {
-  return backendJson<string[]>('/api/public/gallery-categories');
-}
-
-export async function getSocialLinks(visibleOnly = true): Promise<SocialLink[]> {
-  if (!visibleOnly) return adminJson<SocialLink[]>('/api/admin/social-links');
-  return backendJson<SocialLink[]>('/api/public/social-links');
-}
-
 /* ── admin reads ───────────────────────────────────────────── */
 
-export type MessageFilter = 'all' | 'unread' | 'read';
+export async function getAdminProfile(): Promise<Profile> {
+  return adminJson<Profile>('/api/admin/profile');
+}
+
+export async function getAdminSettings(): Promise<Settings> {
+  return adminJson<Settings>('/api/admin/settings');
+}
+
+export async function getAdminProjects(): Promise<Project[]> {
+  return adminJson<Project[]>('/api/admin/projects');
+}
 
 export async function getAdminExperience(): Promise<Experience[]> {
   return adminJson<Experience[]>('/api/admin/experience');
 }
 
+export async function getAdminSkills(): Promise<{ category: string; items: Skill[] }[]> {
+  return adminJson<{ category: string; items: Skill[] }[]>('/api/admin/skills');
+}
+
 export async function getAdminGallery(): Promise<GalleryItem[]> {
   return adminJson<GalleryItem[]>('/api/admin/gallery');
 }
+
+export async function getAdminSocialLinks(): Promise<SocialLink[]> {
+  return adminJson<SocialLink[]>('/api/admin/social-links');
+}
+
+export type MessageFilter = 'all' | 'unread' | 'read';
 
 export async function getAdminMessages(filter: MessageFilter = 'all') {
   return adminJson<{

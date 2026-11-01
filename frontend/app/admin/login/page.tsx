@@ -13,7 +13,9 @@ export const metadata: Metadata = {
 };
 
 export default async function LoginPage() {
-  const user = await getSessionUser();
+  // A sleeping backend must not turn the sign-in page into an error page.
+  // The form itself can still render; submitting will retry the API.
+  const user = await getSessionUser().catch(() => null);
   if (user) redirect('/admin');
 
   return (

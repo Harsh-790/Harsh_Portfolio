@@ -22,7 +22,12 @@ export type ActionState = { ok: boolean; message: string; id?: string; errors?: 
 
 type ActionResult = { ok: boolean; message: string; id?: string; errors?: Record<string, string> };
 
-function refresh() {
+async function refresh() {
+  // Pull the fresh public-only snapshot while the backend is definitely awake,
+  // then invalidate the statically generated pages. If the refresh fails, the
+  // existing committed snapshot still keeps the public site online.
+  const { refreshPublicContentFromBackend } = await import('@/lib/public-content');
+  await refreshPublicContentFromBackend();
   revalidatePath('/', 'layout');
 }
 
@@ -51,7 +56,7 @@ async function saveAction(
   await requireAdmin();
   try {
     const result = await adminJson<ActionResult>(path, jsonInit(method, formDataToObject(formData)));
-    if (result.ok) refresh();
+    if (result.ok) await refresh();
     return result;
   } catch (error) {
     const { message } = await readApiError(error);
@@ -162,7 +167,7 @@ export async function saveSettingsAction(_prev: ActionState, formData: FormData)
 export async function resetSettingsAction(): Promise<void> {
   await requireAdmin();
   await adminJson<ActionResult>('/api/admin/settings/reset', { method: 'POST' });
-  refresh();
+  await refresh();
   redirect('/admin/settings?reset=1');
 }
 
@@ -177,14 +182,14 @@ export async function setMessageReadAction(formData: FormData): Promise<void> {
   const id = trimmed(formData, 'id');
   const read = trimmed(formData, 'read') !== 'false';
   await adminJson(`/api/admin/messages/${id}/read`, jsonInit('PATCH', { read }));
-  refresh();
+  await refresh();
 }
 
 export async function deleteMessageAction(formData: FormData): Promise<void> {
   await requireAdmin();
   const id = trimmed(formData, 'id');
   await adminJson(`/api/admin/messages/${id}`, { method: 'DELETE' });
-  refresh();
+  await refresh();
 }
 
 /* ══ generic list helpers (delete / reorder / toggle) ════════ */
@@ -194,7 +199,7 @@ export async function deleteRecordAction(formData: FormData): Promise<void> {
   const resource = trimmed(formData, 'resource');
   const id = trimmed(formData, 'id');
   await adminJson(`/api/admin/records/${encodeURIComponent(resource)}/${id}`, { method: 'DELETE' });
-  refresh();
+  await refresh();
 }
 
 export async function toggleRecordAction(formData: FormData): Promise<void> {
@@ -206,7 +211,7 @@ export async function toggleRecordAction(formData: FormData): Promise<void> {
     `/api/admin/records/${encodeURIComponent(resource)}/${id}/toggle`,
     jsonInit('PATCH', { field }),
   );
-  refresh();
+  await refresh();
 }
 
 export async function moveRecordAction(formData: FormData): Promise<void> {
@@ -221,7 +226,7 @@ export async function moveRecordAction(formData: FormData): Promise<void> {
       scopeValue: trimmed(formData, 'scopeValue'),
     }),
   );
-  refresh();
+  await refresh();
 }
 
 /** Used by the "duplicate" button on the projects list. */
@@ -229,5 +234,5 @@ export async function duplicateProjectAction(formData: FormData): Promise<void> 
   await requireAdmin();
   const id = trimmed(formData, 'id');
   await adminJson(`/api/admin/projects/${id}/duplicate`, { method: 'POST' });
-  refresh();
+  await refresh();
 }

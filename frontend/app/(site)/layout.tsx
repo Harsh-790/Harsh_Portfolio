@@ -2,11 +2,12 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Gullu from '@/components/Gullu';
 import PageShell from '@/components/PageShell';
-import { getProfile, getSocialLinks } from '@/lib/content';
-import { getSettings } from '@/lib/settings';
+import { getProfile, getSettings, getSocialLinks } from '@/lib/public-content';
 
-export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const [profile, socials, settings] = await Promise.all([getProfile(), getSocialLinks(), getSettings()]);
+export default function SiteLayout({ children }: { children: React.ReactNode }) {
+  const profile = getProfile();
+  const socials = getSocialLinks();
+  const settings = getSettings();
 
   return (
     <div className="flex min-h-dvh flex-col">

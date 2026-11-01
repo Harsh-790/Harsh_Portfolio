@@ -3,7 +3,7 @@ import { Plus, X } from 'lucide-react';
 import { Badge, EmptyState, PageHead, Panel, RowActions, SavedNote } from '@/components/admin/AdminUI';
 import { SkillForm } from '@/components/admin/ContentForms';
 import { requireAdmin } from '@/lib/auth';
-import { getSkills } from '@/lib/content';
+import { getAdminSkills } from '@/lib/content';
 import { SKILL_CATEGORIES } from '@/lib/options';
 import { pad } from '@/lib/types';
 
@@ -16,7 +16,7 @@ export default async function AdminSkillsPage({
 }) {
   await requireAdmin();
   const params = await searchParams;
-  const groups = await getSkills();
+  const groups = await getAdminSkills();
   const all = groups.flatMap((group) => group.items);
 
   const isNew = params.edit === 'new';

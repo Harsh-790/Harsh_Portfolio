@@ -2,15 +2,15 @@ import type { Metadata, Viewport } from 'next';
 import { Archivo, Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import ThemeRestore from '@/components/ThemeRestore';
-import { getSettings } from '@/lib/settings';
+import { getSettings } from '@/lib/public-content';
 import { absoluteUrl } from '@/lib/types';
 
 const archivo = Archivo({ subsets: ['latin'], variable: '--font-archivo', display: 'swap' });
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono-jet', display: 'swap' });
 
-export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSettings();
+export function generateMetadata(): Metadata {
+  const settings = getSettings();
   const title = settings['site.title'] || 'Portfolio';
   const description = settings['site.description'] || '';
   const ogImage = settings['seo.ogImage'];
@@ -55,8 +55,8 @@ export const viewport: Viewport = {
  */
 const themeScript = `(function(){try{var k='portfolio-theme',m=localStorage.getItem(k),d=document.documentElement.getAttribute('data-default-theme')||'light';if(m!=='light'&&m!=='dark'&&m!=='color'){m=d;}document.documentElement.setAttribute('data-theme',m);}catch(e){}})();`;
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const settings = await getSettings();
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const settings = getSettings();
   const defaultMode = ['light', 'dark', 'color'].includes(settings['theme.defaultMode'])
     ? settings['theme.defaultMode']
     : 'light';

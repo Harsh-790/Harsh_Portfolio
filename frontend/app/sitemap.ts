@@ -1,11 +1,9 @@
 import type { MetadataRoute } from 'next';
-import { getProjects } from '@/lib/content';
+import { getProjects } from '@/lib/public-content';
 import { absoluteUrl } from '@/lib/types';
 
-export const dynamic = 'force-dynamic';
-
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const projects = await getProjects();
+export default function sitemap(): MetadataRoute.Sitemap {
+  const projects = getProjects();
   const now = new Date();
 
   const pages = ['', '/about', '/projects', '/experience', '/skills', '/gallery', '/contact'].map((path) => ({

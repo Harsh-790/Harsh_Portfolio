@@ -3,7 +3,7 @@ import { PageHead } from '@/components/admin/AdminUI';
 import { SettingsForm } from '@/components/admin/SiteForms';
 import { requireAdmin } from '@/lib/auth';
 import { SETTING_GROUPS } from '@/lib/schemas';
-import { getSettings } from '@/lib/settings';
+import { getAdminSettings } from '@/lib/content';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,7 +24,7 @@ const HOME_GROUPS = [
 
 export default async function AdminHomepagePage() {
   await requireAdmin();
-  const values = await getSettings();
+  const values = await getAdminSettings();
   const groups = SETTING_GROUPS.filter((group) => HOME_GROUPS.includes(group.id));
 
   return (

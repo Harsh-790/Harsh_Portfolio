@@ -2,13 +2,13 @@ import { ArrowUpRight } from 'lucide-react';
 import { PageHead, Panel } from '@/components/admin/AdminUI';
 import { ThemeForm } from '@/components/admin/SiteForms';
 import { requireAdmin } from '@/lib/auth';
-import { getSettings } from '@/lib/settings';
+import { getAdminSettings } from '@/lib/content';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminThemePage() {
   await requireAdmin();
-  const values = await getSettings();
+  const values = await getAdminSettings();
 
   return (
     <>

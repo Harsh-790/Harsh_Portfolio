@@ -2,13 +2,13 @@ import { ArrowUpRight } from 'lucide-react';
 import { PageHead } from '@/components/admin/AdminUI';
 import { ProfileForm } from '@/components/admin/SiteForms';
 import { requireAdmin } from '@/lib/auth';
-import { getProfile } from '@/lib/content';
+import { getAdminProfile } from '@/lib/content';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminAboutPage() {
   await requireAdmin();
-  const profile = await getProfile();
+  const profile = await getAdminProfile();
 
   return (
     <>

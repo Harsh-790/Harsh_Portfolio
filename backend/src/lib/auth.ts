@@ -66,8 +66,10 @@ export async function getUserFromToken(token: string | undefined): Promise<Sessi
 export async function verifyCredentials(email: string, password: string): Promise<SessionUser | null> {
   const user = await prisma.user.findUnique({ where: { email: email.trim().toLowerCase() } });
   if (!user) {
-    // Spend roughly the same time as a real comparison.
-    await compare(password, '$2a$12$0000000000000000000000000000000000000000000000000000');
+    // Spend the same time as a real bcrypt comparison. This must be a valid
+    // 60-character hash: bcryptjs short-circuits malformed hashes, which would
+    // make an unknown email respond much faster and leak which emails exist.
+    await compare(password, '$2b$12$dnhllE7kHr143yBdL.K.cuJsGp1pUoWT/HR7eErzOIc.Xp5G/7nZa');
     return null;
   }
 

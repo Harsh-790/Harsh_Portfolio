@@ -4,14 +4,11 @@ import { ArrowUpRight, Download, MapPin } from 'lucide-react';
 import Reveal from '@/components/Reveal';
 import { SocialList } from '@/components/SocialLinks';
 import { ArrowLink, Prose, SplitRows, StatusPill, TagList, Ticks } from '@/components/ui';
-import { getProfile, getSkills, getSocialLinks } from '@/lib/content';
-import { getSettings } from '@/lib/settings';
+import { getProfile, getSettings, getSkills, getSocialLinks } from '@/lib/public-content';
 import { commaList, lines, pad, splitPair } from '@/lib/types';
 
-export const dynamic = 'force-dynamic';
-
-export async function generateMetadata(): Promise<Metadata> {
-  const profile = await getProfile();
+export function generateMetadata(): Metadata {
+  const profile = getProfile();
   return {
     title: 'About',
     description: profile.intro || profile.bio.slice(0, 150),
@@ -19,13 +16,11 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function AboutPage() {
-  const [profile, socials, settings, skills] = await Promise.all([
-    getProfile(),
-    getSocialLinks(),
-    getSettings(),
-    getSkills(),
-  ]);
+export default function AboutPage() {
+  const profile = getProfile();
+  const socials = getSocialLinks();
+  const settings = getSettings();
+  const skills = getSkills();
 
   const approach = lines(profile.approach).map((line) => splitPair(line));
   const interests = commaList(profile.interests);

@@ -1,0 +1,45 @@
+# Two Render Web Services from the same repository.
+# Create the services with these settings (or apply this blueprint and fill in
+# the secret values in the Render dashboard).
+services:
+  - type: web
+    name: harsh-portfolio-frontend
+    runtime: node
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NEXT_PUBLIC_BACKEND_URL
+        sync: false
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false
+
+  - type: web
+    name: harsh-portfolio-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: AUTH_SECRET
+        sync: false
+      - key: ADMIN_NAME
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: GULLU_API_KEY
+        sync: false
+      - key: GULLU_API_URL
+        sync: false
+      - key: GULLU_MODEL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: PORT
+        value: 5000

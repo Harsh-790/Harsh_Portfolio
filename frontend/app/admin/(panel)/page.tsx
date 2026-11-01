@@ -2,8 +2,7 @@ import Link from 'next/link';
 import { ArrowUpRight, FileText, FolderOpen, Image as ImageIcon, Palette, Plus, Upload } from 'lucide-react';
 import { Badge, PageHead, Panel, StatTile } from '@/components/admin/AdminUI';
 import { requireAdmin } from '@/lib/auth';
-import { getCounts, getProjects, getRecentMessages } from '@/lib/content';
-import { getSettings } from '@/lib/settings';
+import { getAdminProjects, getAdminSettings, getCounts, getRecentMessages } from '@/lib/content';
 import { relativeTime } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
@@ -11,11 +10,12 @@ export const dynamic = 'force-dynamic';
 export default async function AdminDashboard() {
   await requireAdmin();
   const counts = await getCounts();
-  const [messages, projects, settings] = await Promise.all([
+  const [messages, allProjects, settings] = await Promise.all([
     getRecentMessages(4),
-    getProjects({ includeDrafts: true, limit: 4 }),
-    getSettings(),
+    getAdminProjects(),
+    getAdminSettings(),
   ]);
+  const projects = allProjects.slice(0, 4);
 
   const quickActions = [
     { href: '/admin/homepage', label: 'Edit homepage text', icon: FileText },

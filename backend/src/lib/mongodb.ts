@@ -13,11 +13,18 @@ const globalForMongo = globalThis as unknown as {
   portfolioMongoClient?: Promise<MongoClient>;
 };
 
+/** Keep GridFS failures bounded to the same outage budget as Prisma. */
+const SERVER_SELECTION_TIMEOUT_MS = 5_000;
+
 async function connect(): Promise<MongoClient> {
   const uri = process.env.DATABASE_URL;
   if (!uri) throw new Error('DATABASE_URL is not configured.');
 
-  const client = new MongoClient(uri, { maxPoolSize: 10 });
+  const client = new MongoClient(uri, {
+    maxPoolSize: 10,
+    serverSelectionTimeoutMS: SERVER_SELECTION_TIMEOUT_MS,
+    connectTimeoutMS: SERVER_SELECTION_TIMEOUT_MS,
+  });
   try {
     await client.connect();
     return client;

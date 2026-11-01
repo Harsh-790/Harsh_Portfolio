@@ -3,14 +3,11 @@ import { Clock, Download, Mail, MapPin } from 'lucide-react';
 import ContactForm from '@/components/ContactForm';
 import { SocialList } from '@/components/SocialLinks';
 import { StatusPill } from '@/components/ui';
-import { getProfile, getSocialLinks } from '@/lib/content';
-import { getSettings } from '@/lib/settings';
+import { getProfile, getSettings, getSocialLinks } from '@/lib/public-content';
 import { absoluteUrl } from '@/lib/types';
 
-export const dynamic = 'force-dynamic';
-
-export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSettings();
+export function generateMetadata(): Metadata {
+  const settings = getSettings();
   return {
     title: 'Contact',
     description: settings['page.contact.lead'],
@@ -18,8 +15,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function ContactPage() {
-  const [profile, socials, settings] = await Promise.all([getProfile(), getSocialLinks(), getSettings()]);
+export default function ContactPage() {
+  const profile = getProfile();
+  const socials = getSocialLinks();
+  const settings = getSettings();
   const availability = settings['contact.availability'] || profile.status;
 
   return (

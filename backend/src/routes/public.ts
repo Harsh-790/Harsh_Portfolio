@@ -12,6 +12,7 @@ import {
 } from '../services/content';
 import { getSettings } from '../lib/settings';
 import { submitContactMessage } from '../services/contact';
+import { getPublicSnapshot } from '../services/snapshot';
 
 export const publicRouter = Router();
 
@@ -24,6 +25,19 @@ function int(value: unknown): number | undefined {
   const parsed = Number(single(value));
   return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : undefined;
 }
+
+/**
+ * Public content snapshot used by the frontend at build/deploy time.
+ * It contains published content and public settings only; never admin data.
+ */
+publicRouter.get('/snapshot', async (_req, res, next) => {
+  try {
+    res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+    res.json(await getPublicSnapshot());
+  } catch (error) {
+    next(error);
+  }
+});
 
 publicRouter.get('/profile', async (_req, res, next) => {
   try {

@@ -25,11 +25,24 @@ export async function POST(request: Request) {
   }
 
   try {
-    const response = await backendFetch('/api/gullu', {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
-    });
+    const response = await backendFetch(
+      '/api/gullu',
+      {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+      },
+      null,
+      25_000,
+    );
+    if (response.status >= 500) {
+      // Keep database/API-internal details out of the public chat UI.
+      return NextResponse.json(
+        { error: 'Gullu is unavailable right now. The rest of the portfolio is still available.' },
+        { status: 503 },
+      );
+    }
+
     const text = await response.text();
     return new NextResponse(text, {
       status: response.status,
@@ -40,6 +53,9 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error('Gullu proxy failed:', error);
-    return NextResponse.json({ error: 'Gullu is unavailable right now.' }, { status: 502 });
+    return NextResponse.json(
+      { error: 'Gullu is unavailable right now. The rest of the portfolio is still available.' },
+      { status: 503 },
+    );
   }
 }

@@ -1,13 +1,15 @@
-import { backendJson } from './api';
+import { getSettings as getPublicSettings } from './public-content';
 import { jsonArray, type Settings, type Stat } from './types';
 
 export { DEFAULT_SETTINGS, SETTING_GROUPS, ACCENT_PRESETS, THEME_MODES } from './schemas';
 export type { SettingField, SettingGroup, ThemeMode } from './schemas';
 
-
-/** All settings, resolved by the backend (database rows overriding defaults). */
-export async function getSettings(): Promise<Settings> {
-  return backendJson<Settings>('/api/public/settings');
+/**
+ * Public settings come from the committed snapshot, never from the API.
+ * Admin settings use getAdminSettings() in lib/content.ts instead.
+ */
+export function getSettings(): Settings {
+  return getPublicSettings();
 }
 
 /** Parse the editable statistics block ("Label | Value | Note"). */

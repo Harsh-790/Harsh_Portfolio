@@ -1,14 +1,11 @@
 import type { Metadata } from 'next';
 import ProjectFilters from '@/components/ProjectFilters';
 import { ArrowLink } from '@/components/ui';
-import { getCategories, getProjects } from '@/lib/content';
-import { getSettings } from '@/lib/settings';
+import { getCategories, getProjects, getSettings } from '@/lib/public-content';
 import { pad } from '@/lib/types';
 
-export const dynamic = 'force-dynamic';
-
-export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSettings();
+export function generateMetadata(): Metadata {
+  const settings = getSettings();
   return {
     title: 'Projects',
     description: settings['page.projects.lead'],
@@ -16,8 +13,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function ProjectsPage() {
-  const [projects, categories, settings] = await Promise.all([getProjects(), getCategories(), getSettings()]);
+export default function ProjectsPage() {
+  const projects = getProjects();
+  const categories = getCategories();
+  const settings = getSettings();
 
   return (
     <>

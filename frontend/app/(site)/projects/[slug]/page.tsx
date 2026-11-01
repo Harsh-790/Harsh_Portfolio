@@ -6,16 +6,19 @@ import Gallery from '@/components/Gallery';
 import ProjectCard from '@/components/ProjectCard';
 import Reveal from '@/components/Reveal';
 import { MetricGrid, Prose, SectionHead, Spec, TagList, Ticks } from '@/components/ui';
-import { getProjectBySlug, getProjects, getRelatedProjects } from '@/lib/content';
+import { getProjectBySlug, getProjects, getRelatedProjects } from '@/lib/public-content';
 import { isLocalVideo, pad, videoEmbedUrl } from '@/lib/types';
-
-export const dynamic = 'force-dynamic';
 
 type Params = { params: Promise<{ slug: string }> };
 
+/** Every published project is available as a static page at deploy time. */
+export function generateStaticParams() {
+  return getProjects().map((project) => ({ slug: project.slug }));
+}
+
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug);
+  const project = getProjectBySlug(slug);
   if (!project) return { title: 'Project not found' };
   return {
     title: project.title,
@@ -32,10 +35,11 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 export default async function ProjectDetailPage({ params }: Params) {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug);
+  const project = getProjectBySlug(slug);
   if (!project) notFound();
 
-  const [related, all] = await Promise.all([getRelatedProjects(project, 3), getProjects()]);
+  const related = getRelatedProjects(project, 3);
+  const all = getProjects();
   const position = Math.max(0, all.findIndex((p) => p.id === project.id)) + 1;
 
   const blocks = [

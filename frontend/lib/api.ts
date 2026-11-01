@@ -2,14 +2,20 @@ import 'server-only';
 import { cookies } from 'next/headers';
 
 /**
+ * Server-to-server client for the Express API.
+ *
  * The browser only ever talks to this Next.js app. Server components, server
  * actions and the small media/Gullu proxies call the Express API with the
- * admin's HTTP-only session token. BACKEND_URL and the token stay server-side.
+ * admin's HTTP-only session token. The backend URL is browser-safe and comes
+ * from NEXT_PUBLIC_BACKEND_URL; the session token never reaches client code.
  */
 
 export const SESSION_COOKIE = 'portfolio_session';
 
-const BACKEND_URL = (process.env.BACKEND_URL || 'http://127.0.0.1:5000').replace(/\/$/, '');
+const BACKEND_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:5000').replace(/\/$/, '');
+
+/** Keep backend failures from turning into an indefinite loading state. */
+const REQUEST_TIMEOUT_MS = 12_000;
 
 export class ApiError extends Error {
   status: number;
@@ -40,8 +46,21 @@ export async function backendFetch(
   path: string,
   init?: RequestInit,
   token?: string | null,
+  timeoutMs = REQUEST_TIMEOUT_MS,
 ): Promise<Response> {
-  return fetch(`${BACKEND_URL}${path}`, withHeaders(init, token));
+  const signal = init?.signal ?? AbortSignal.timeout(timeoutMs);
+
+  try {
+    return await fetch(`${BACKEND_URL}${path}`, {
+      ...withHeaders(init, token),
+      signal,
+    });
+  } catch (error) {
+    if (error instanceof Error && (error.name === 'AbortError' || error.name === 'TimeoutError')) {
+      throw new ApiError(503, 'The backend is taking too long to respond. Please try again shortly.');
+    }
+    throw new ApiError(503, 'Backend is temporarily unavailable. Please try again shortly.');
+  }
 }
 
 async function errorFrom(response: Response): Promise<ApiError> {
@@ -85,10 +104,14 @@ export async function adminJson<T>(path: string, init?: RequestInit): Promise<T>
 }
 
 /** Authenticated raw response, used by the media proxy to preserve statuses. */
-export async function adminBackendFetch(path: string, init?: RequestInit): Promise<Response | null> {
+export async function adminBackendFetch(
+  path: string,
+  init?: RequestInit,
+  timeoutMs?: number,
+): Promise<Response | null> {
   const token = await getSessionToken();
   if (!token) return null;
-  return backendFetch(path, init, token);
+  return backendFetch(path, init, token, timeoutMs);
 }
 
 export async function readApiError(error: unknown): Promise<{ message: string; data: unknown }> {

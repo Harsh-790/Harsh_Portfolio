@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { backendJson, readApiError } from '@/lib/api';
+import { ApiError, backendJson, readApiError } from '@/lib/api';
 import { formDataToObject } from '@/lib/forms';
 
 export type ContactState = {
@@ -26,6 +26,12 @@ export async function submitContactMessage(_prev: ContactState, formData: FormDa
 
     return result;
   } catch (error) {
+    if (error instanceof ApiError && error.status >= 500) {
+      return {
+        ok: false,
+        message: 'Unable to send your message right now. Please try again shortly.',
+      };
+    }
     const { message } = await readApiError(error);
     return { ok: false, message };
   }

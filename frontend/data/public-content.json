@@ -1,0 +1,514 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-30T20:26:07.792Z",
+  "profile": {
+    "id": "507f1f77bcf86cd799439011",
+    "name": "Harsh Raj",
+    "headline": "DATA SCIENTIST / AI & ML",
+    "role": "Data Scientist",
+    "tagline": "Turning data into intelligent decisions.",
+    "intro": "I design and ship machine learning systems end to end — data pipelines, honest evaluation, and models that hold up once they leave the notebook.",
+    "location": "Lucknow, India",
+    "status": "Open to data science & applied ML roles",
+    "currentRole": "Data Scientist",
+    "company": "",
+    "email": "hello@harshraj.dev",
+    "phone": "",
+    "bio": "I am a data scientist with five years of practice across retail, healthcare and industrial data. My work tends to start in the unglamorous middle of a problem: an undocumented table, an ambiguous question, a metric that everyone quotes but nobody has defined. I like that part.\n\nMost of what I build ends up as a system rather than a report — a churn model wired into a CRM, a defect detector running on a factory line, a forecasting service a planning team opens every Monday. That means I care as much about evaluation harnesses, monitoring and communication as I do about model choice.\n\nI write Python and SQL daily, read papers slowly, and keep a notebook of failed experiments so I stop repeating them. Outside of work I run short workshops on machine learning fundamentals for students and early-career analysts.",
+    "approach": "Start from the decision|Before touching data I write down the decision the model is supposed to change and the cost of being wrong in each direction. Most modelling mistakes are really specification mistakes.\nBuild the evaluation first|A held-out set, a baseline and a metric that reflects the real cost. If the harness is honest, the model choice becomes a short conversation instead of an argument.\nEarn complexity|Rules, averages and logistic regression are cheap and interpretable. I only reach for gradient boosting or a neural network when the validation curve says it pays for itself.\nDesign for the failure case|Silent drift and quiet distribution shift break more systems than bad accuracy. Every model I ship has monitoring, a retrain trigger and a documented fallback.\nExplain it twice|Once for the engineers who have to maintain it, once for the people who have to trust it. If I cannot explain a model in two registers, it is not ready.",
+    "education": "2020 — 2024|B.Tech, Computer Science & Engineering — Delhi Technological University, 8.6 CGPA\n2022|Applied Machine Learning (Specialisation) — Stanford Online, 96%\n2023|Deep Learning Specialisation — DeepLearning.AI, completed all five courses\n2024|Google Advanced Data Analytics — Google Career Certificates",
+    "interests": "Applied machine learning, Model evaluation, Forecasting, Computer vision, NLP & LLMs, Statistical inference, Data storytelling, Open datasets, Teaching",
+    "avatar": "/api/media/6ad8ec3fc498d952445bcb12",
+    "resumeUrl": "/api/media/6ad8ec3fc498d952445bcb14",
+    "yearsExp": "Fresher",
+    "legacyId": "profile"
+  },
+  "projects": [
+    {
+      "id": "6ada7481b0352984f5d4575b",
+      "slug": "netflix-content-engagement-analysis-eda",
+      "title": "Netflix Content & Engagement Analysis (EDA)",
+      "summary": "• Processed 5,000+ media records using Pandas and NumPy to uncover global distribution patterns and top genre metrics.\r\n• Engineered visually stunning Matplotlib and Seaborn charts to analyze audience engagement shifts and historical trends.\r\n• Generated structured analytical reports that improved dataset interpretation and automated diagnostic data cleaning",
+      "overview": "",
+      "problem": "",
+      "approach": "",
+      "datasetInfo": "",
+      "modelInfo": "",
+      "results": "",
+      "category": "Data Analytics",
+      "status": "Completed",
+      "date": "2026",
+      "thumbnail": "",
+      "videoUrl": "",
+      "githubUrl": "",
+      "liveUrl": "",
+      "datasetUrl": "",
+      "technologies": [],
+      "metrics": [],
+      "gallery": [],
+      "featured": true,
+      "published": true,
+      "order": 10,
+      "createdAt": "2026-10-22T20:39:29.248Z",
+      "updatedAt": "2026-10-22T20:39:29.248Z",
+      "legacyId": null
+    }
+  ],
+  "experience": [],
+  "skills": [
+    {
+      "category": "Programming",
+      "items": [
+        {
+          "id": "6ad7b03141fc47fc3e23954a",
+          "name": "Python",
+          "category": "Programming",
+          "note": "primary language since 2020",
+          "highlight": true,
+          "published": true,
+          "order": 1,
+          "legacyId": "cmve1bl4v000ff9s09q01uhew"
+        },
+        {
+          "id": "6ad7b03241fc47fc3e23954b",
+          "name": "SQL",
+          "category": "Programming",
+          "note": "window functions, query tuning",
+          "highlight": true,
+          "published": true,
+          "order": 2,
+          "legacyId": "cmve1bl54000gf9s0wyr64dog"
+        },
+        {
+          "id": "6ad7b03741fc47fc3e239564",
+          "name": "Java",
+          "category": "Programming",
+          "note": "coursework and tooling",
+          "highlight": false,
+          "published": true,
+          "order": 27,
+          "legacyId": "cmve1blby0015f9s09zrvx6f1"
+        }
+      ]
+    },
+    {
+      "category": "Data Science",
+      "items": [
+        {
+          "id": "6ad7b03241fc47fc3e23954c",
+          "name": "Pandas",
+          "category": "Data Science",
+          "note": "transformation at scale",
+          "highlight": true,
+          "published": true,
+          "order": 3,
+          "legacyId": "cmve1bl5d000hf9s0or5d17gr"
+        },
+        {
+          "id": "6ad7b03241fc47fc3e23954d",
+          "name": "NumPy",
+          "category": "Data Science",
+          "note": "vectorised computation",
+          "highlight": true,
+          "published": true,
+          "order": 4,
+          "legacyId": "cmve1bl5m000if9s0ez1xp28z"
+        },
+        {
+          "id": "6ad7b03241fc47fc3e23954e",
+          "name": "Scikit-learn",
+          "category": "Data Science",
+          "note": "pipelines, model selection",
+          "highlight": true,
+          "published": true,
+          "order": 5,
+          "legacyId": "cmve1bl5v000jf9s0chlp2efs"
+        },
+        {
+          "id": "6ad7b03341fc47fc3e23954f",
+          "name": "Statistics",
+          "category": "Data Science",
+          "note": "hypothesis testing, inference",
+          "highlight": false,
+          "published": true,
+          "order": 6,
+          "legacyId": "cmve1bl64000kf9s02e3iji74"
+        },
+        {
+          "id": "6ad7b03341fc47fc3e239550",
+          "name": "Experiment design",
+          "category": "Data Science",
+          "note": "A/B tests, power analysis",
+          "highlight": false,
+          "published": true,
+          "order": 7,
+          "legacyId": "cmve1bl6e000lf9s04nc5zcqc"
+        },
+        {
+          "id": "6ad7b03741fc47fc3e239565",
+          "name": "Data visualisation",
+          "category": "Data Science",
+          "note": "Plotly, Matplotlib, Power BI",
+          "highlight": true,
+          "published": true,
+          "order": 29,
+          "legacyId": "cmve1blcg0017f9s0s4u27fyg"
+        },
+        {
+          "id": "6ad7b03841fc47fc3e239566",
+          "name": "Data storytelling",
+          "category": "Data Science",
+          "note": "briefs, exec communication",
+          "highlight": false,
+          "published": true,
+          "order": 30,
+          "legacyId": "cmve1blcp0018f9s0ip2cegx9"
+        }
+      ]
+    },
+    {
+      "category": "Machine Learning",
+      "items": [
+        {
+          "id": "6ad7b03341fc47fc3e239551",
+          "name": "Feature engineering",
+          "category": "Machine Learning",
+          "note": "leakage-safe pipelines",
+          "highlight": true,
+          "published": true,
+          "order": 8,
+          "legacyId": "cmve1bl6n000mf9s0ed6v10ni"
+        },
+        {
+          "id": "6ad7b03341fc47fc3e239552",
+          "name": "Regression",
+          "category": "Machine Learning",
+          "note": "linear, regularised, GLM",
+          "highlight": false,
+          "published": true,
+          "order": 9,
+          "legacyId": "cmve1bl6w000nf9s0v2m3sa8o"
+        },
+        {
+          "id": "6ad7b03441fc47fc3e239553",
+          "name": "Classification",
+          "category": "Machine Learning",
+          "note": "imbalanced, calibrated",
+          "highlight": true,
+          "published": true,
+          "order": 10,
+          "legacyId": "cmve1bl76000of9s03swgnh8t"
+        },
+        {
+          "id": "6ad7b03441fc47fc3e239554",
+          "name": "Gradient boosting",
+          "category": "Machine Learning",
+          "note": "XGBoost, LightGBM, CatBoost",
+          "highlight": true,
+          "published": true,
+          "order": 11,
+          "legacyId": "cmve1bl7e000pf9s0e0ierqra"
+        },
+        {
+          "id": "6ad7b03441fc47fc3e239555",
+          "name": "Clustering",
+          "category": "Machine Learning",
+          "note": "k-prototypes, HDBSCAN",
+          "highlight": false,
+          "published": true,
+          "order": 12,
+          "legacyId": "cmve1bl7n000qf9s08vm3vtmw"
+        },
+        {
+          "id": "6ad7b03441fc47fc3e239556",
+          "name": "Model evaluation",
+          "category": "Machine Learning",
+          "note": "rolling origin, calibration",
+          "highlight": true,
+          "published": true,
+          "order": 13,
+          "legacyId": "cmve1bl83000rf9s06o50aikn"
+        }
+      ]
+    },
+    {
+      "category": "AI",
+      "items": [
+        {
+          "id": "6ad7b03541fc47fc3e239557",
+          "name": "Deep learning",
+          "category": "AI",
+          "note": "PyTorch, transfer learning",
+          "highlight": true,
+          "published": true,
+          "order": 14,
+          "legacyId": "cmve1bl8c000sf9s0jteo2hon"
+        },
+        {
+          "id": "6ad7b03541fc47fc3e239558",
+          "name": "Computer vision",
+          "category": "AI",
+          "note": "detection, segmentation, ONNX",
+          "highlight": true,
+          "published": true,
+          "order": 15,
+          "legacyId": "cmve1bl8m000tf9s0hqonx1xg"
+        },
+        {
+          "id": "6ad7b03541fc47fc3e239559",
+          "name": "NLP",
+          "category": "AI",
+          "note": "transformers, topic modelling",
+          "highlight": true,
+          "published": true,
+          "order": 16,
+          "legacyId": "cmve1bl8w000uf9s0c9tcyh3j"
+        },
+        {
+          "id": "6ad7b03541fc47fc3e23955a",
+          "name": "LLMs & RAG",
+          "category": "AI",
+          "note": "retrieval, evaluation, guardrails",
+          "highlight": true,
+          "published": true,
+          "order": 17,
+          "legacyId": "cmve1bl95000vf9s07ce96sw7"
+        },
+        {
+          "id": "6ad7b03541fc47fc3e23955b",
+          "name": "Forecasting",
+          "category": "AI",
+          "note": "hierarchical, probabilistic",
+          "highlight": false,
+          "published": true,
+          "order": 18,
+          "legacyId": "cmve1bl9e000wf9s06iwuo5x4"
+        }
+      ]
+    },
+    {
+      "category": "Tools",
+      "items": [
+        {
+          "id": "6ad7b03541fc47fc3e23955c",
+          "name": "Git & GitHub",
+          "category": "Tools",
+          "note": "trunk-based, code review",
+          "highlight": true,
+          "published": true,
+          "order": 19,
+          "legacyId": "cmve1bl9n000xf9s0lmbwyknv"
+        },
+        {
+          "id": "6ad7b03641fc47fc3e23955d",
+          "name": "Jupyter",
+          "category": "Tools",
+          "note": "reproducible notebooks",
+          "highlight": false,
+          "published": true,
+          "order": 20,
+          "legacyId": "cmve1bl9w000yf9s0kzznyez3"
+        },
+        {
+          "id": "6ad7b03641fc47fc3e23955e",
+          "name": "Docker",
+          "category": "Tools",
+          "note": "reproducible environments",
+          "highlight": true,
+          "published": true,
+          "order": 21,
+          "legacyId": "cmve1bla9000zf9s0bhrqkm6w"
+        },
+        {
+          "id": "6ad7b03641fc47fc3e23955f",
+          "name": "Airflow",
+          "category": "Tools",
+          "note": "DAG design, backfills",
+          "highlight": false,
+          "published": true,
+          "order": 22,
+          "legacyId": "cmve1blai0010f9s0201lf3yt"
+        },
+        {
+          "id": "6ad7b03641fc47fc3e239560",
+          "name": "MLflow",
+          "category": "Tools",
+          "note": "experiment tracking",
+          "highlight": false,
+          "published": true,
+          "order": 23,
+          "legacyId": "cmve1blar0011f9s0shhw0bov"
+        },
+        {
+          "id": "6ad7b03641fc47fc3e239561",
+          "name": "Power BI",
+          "category": "Tools",
+          "note": "DAX, dashboard design",
+          "highlight": false,
+          "published": true,
+          "order": 24,
+          "legacyId": "cmve1blb30012f9s0z7nzyryv"
+        },
+        {
+          "id": "6ad7b03741fc47fc3e239562",
+          "name": "PostgreSQL",
+          "category": "Tools",
+          "note": "modelling, indexing",
+          "highlight": true,
+          "published": true,
+          "order": 25,
+          "legacyId": "cmve1blbf0013f9s0bo3u18am"
+        },
+        {
+          "id": "6ad7b03741fc47fc3e239563",
+          "name": "Streamlit",
+          "category": "Tools",
+          "note": "internal tools fast",
+          "highlight": false,
+          "published": true,
+          "order": 26,
+          "legacyId": "cmve1blbo0014f9s0n6fzm1fy"
+        }
+      ]
+    }
+  ],
+  "gallery": [],
+  "socials": [
+    {
+      "id": "6ad7b03a41fc47fc3e239574",
+      "platform": "github",
+      "label": "GitHub",
+      "url": "https://github.com/harshraj",
+      "order": 1,
+      "enabled": true,
+      "legacyId": "cmve1blgi001mf9s0t7eax7xp"
+    },
+    {
+      "id": "6ad7b03b41fc47fc3e239575",
+      "platform": "linkedin",
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/harshraj",
+      "order": 2,
+      "enabled": true,
+      "legacyId": "cmve1blgr001nf9s0l276vmfb"
+    },
+    {
+      "id": "6ad7b03b41fc47fc3e239576",
+      "platform": "x",
+      "label": "X / Twitter",
+      "url": "https://x.com/harshraj",
+      "order": 3,
+      "enabled": true,
+      "legacyId": "cmve1blhj001of9s0wsivmc8d"
+    },
+    {
+      "id": "6ad7b03b41fc47fc3e239577",
+      "platform": "email",
+      "label": "Email",
+      "url": "mailto:hello@harshraj.dev",
+      "order": 4,
+      "enabled": true,
+      "legacyId": "cmve1blhz001pf9s03yja6peh"
+    },
+    {
+      "id": "6ad7b03b41fc47fc3e239578",
+      "platform": "kaggle",
+      "label": "Kaggle",
+      "url": "kaggle.com",
+      "order": 5,
+      "enabled": true,
+      "legacyId": "cmve1blif001qf9s0g5bms8wl"
+    },
+    {
+      "id": "6ad7b03b41fc47fc3e239579",
+      "platform": "instagram",
+      "label": "Instagram",
+      "url": "insta.com",
+      "order": 6,
+      "enabled": true,
+      "legacyId": "cmve1blix001rf9s04s46q112"
+    },
+    {
+      "id": "6ad7b03b41fc47fc3e23957a",
+      "platform": "youtube",
+      "label": "YouTube",
+      "url": "youtube.com",
+      "order": 7,
+      "enabled": true,
+      "legacyId": "cmve1bljh001sf9s0x8f0r4b1"
+    }
+  ],
+  "categories": [
+    {
+      "name": "Data Analytics",
+      "count": 1
+    }
+  ],
+  "galleryCategories": [],
+  "settings": {
+    "site.title": "Harsh Raj — Data Scientist / AI & ML",
+    "site.description": "Portfolio of Harsh Raj, a data scientist building machine learning systems that survive contact with production — forecasting, computer vision, NLP and applied AI.",
+    "site.keywords": "data scientist, machine learning, deep learning, python, sql, portfolio, AI engineer",
+    "site.footerTagline": "Data / Model / Insight",
+    "site.footerNote": "Built with Next.js. Content managed from a private admin panel.",
+    "home.hero.eyebrow": "PORTFOLIO / 2026",
+    "home.hero.kicker": "Turning data into intelligent decisions.",
+    "home.hero.description": "I build machine learning systems end to end — from messy raw data and honest evaluation to models that hold up in production and the dashboards people actually open.",
+    "home.hero.primaryCta": "View projects",
+    "home.hero.secondaryCta": "Resume",
+    "home.hero.pipeline": "DATA,MODEL,INSIGHT",
+    "home.hero.cardLabel": "CURRENTLY",
+    "home.hero.cardValue": "Data Scientist at Northlane Analytics",
+    "home.hero.imageCaption": "PROFILE / HARSH RAJ",
+    "home.stats": "[{\"label\":\"Projects shipped\",\"value\":\"09\",\"note\":\"production + research\"},{\"label\":\"Datasets worked on\",\"value\":\"24\",\"note\":\"tab, image, text\"},{\"label\":\"Models trained\",\"value\":\"38\",\"note\":\"baselines to ensembles\"},{\"label\":\"Best accuracy\",\"value\":\"94.7%\",\"note\":\"churn classifier\"}]",
+    "home.about.label": "01 / ABOUT",
+    "home.about.title": "A data scientist who",
+    "home.about.titleAccent": "ships, not just experiments",
+    "home.about.lead": "Five years of turning ambiguous business questions into measurable systems.",
+    "home.about.body": "I work where statistics meets software. Most of my time goes into the unglamorous middle: cleaning the data nobody documented, choosing a metric that matches the actual decision, and building the evaluation harness before the model.\r\n\r\nThe rest goes into communication. A model that nobody trusts is a model that does not ship, so I spend real effort on charts, notebooks and short written briefs that make results legible to engineers, analysts and executives alike.",
+    "home.about.cta": "More about me",
+    "home.about.image": "/api/media/6ad8e807b6c1a169d1977038",
+    "home.projects.label": "02 / SELECTED WORK",
+    "home.projects.title": "Selected projects",
+    "home.projects.lead": "A few systems I have taken from problem statement to production — with the numbers attached.",
+    "home.projects.cta": "All projects",
+    "home.data.label": "03 / SIGNALS",
+    "home.data.title": "Numbers I actually measure",
+    "home.data.lead": "Every figure below comes from work that shipped or from experiments I ran myself — nothing here is decorative.",
+    "home.data.note": "Metrics are tracked per model version and reviewed before every release.",
+    "home.experience.label": "04 / EXPERIENCE",
+    "home.experience.title": "Where I have worked",
+    "home.experience.lead": "Analytics to applied machine learning, across retail, healthcare and industrial data.",
+    "home.experience.cta": "Full timeline",
+    "home.skills.label": "05 / TOOLKIT",
+    "home.skills.title": "Technical range",
+    "home.skills.lead": "The stack I reach for, grouped the way I actually use it.",
+    "home.skills.cta": "Skill detail",
+    "home.gallery.label": "06 / GALLERY",
+    "home.gallery.title": "Field notes",
+    "home.gallery.lead": "Talks, workshops, dashboards and the occasional whiteboard.",
+    "home.gallery.cta": "Open gallery",
+    "home.contact.label": "07 / CONTACT",
+    "home.contact.title": "Let's build something measurable",
+    "home.contact.lead": "Open to data science and applied ML roles, research collaborations and selective freelance work.",
+    "home.contact.cta": "Start a conversation",
+    "page.about.lead": "Short version: I like problems that have a metric attached, and I like shipping the thing that moves it.",
+    "page.projects.lead": "Nine projects across machine learning, computer vision, NLP, forecasting and analytics. Each one includes the problem, the approach and the results.",
+    "page.experience.lead": "Five roles, one throughline — making decisions measurably better with data.",
+    "page.skills.lead": "No percentage bars. Just the tools, libraries and methods I use, grouped by how they fit together.",
+    "page.gallery.lead": "A working archive of talks, workshops, dashboards and team moments.",
+    "page.contact.lead": "Tell me what you are trying to measure and I will tell you how I would approach it.",
+    "contact.availability": "Available — open to full-time and contract roles",
+    "contact.responseTime": "Usually replies within 24 hours",
+    "contact.formTitle": "Send a message",
+    "contact.formNote": "Messages are stored privately and answered by email.",
+    "contact.successMessage": "Message received. I will get back to you within a day.",
+    "theme.defaultMode": "dark",
+    "theme.accent": "#6F2D18",
+    "gullu.enabled": "on",
+    "gullu.greeting": "Hi, I'm Gullu. Ask me anything about Harsh — his projects, skills, experience or how to reach him. Hindi, English or Hinglish, whatever feels natural.",
+    "gullu.description": "Portfolio AI Assistant",
+    "gullu.voice": "on",
+    "seo.ogImage": ""
+  }
+}

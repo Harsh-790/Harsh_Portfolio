@@ -5,7 +5,7 @@ import { PasswordForm, SettingsForm } from '@/components/admin/SiteForms';
 import { resetSettingsAction } from '@/app/admin/actions';
 import { requireAdmin } from '@/lib/auth';
 import { SETTING_GROUPS } from '@/lib/schemas';
-import { getSettings } from '@/lib/settings';
+import { getAdminSettings } from '@/lib/content';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,7 +13,7 @@ const SITE_GROUPS = ['seo', 'footer', 'gullu'];
 
 export default async function AdminSettingsPage() {
   const admin = await requireAdmin();
-  const values = await getSettings();
+  const values = await getAdminSettings();
   const groups = SETTING_GROUPS.filter((group) => SITE_GROUPS.includes(group.id));
 
   return (

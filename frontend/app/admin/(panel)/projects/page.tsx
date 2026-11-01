@@ -5,7 +5,7 @@ import { ProjectForm } from '@/components/admin/ContentForms';
 import { ConfirmButton } from '@/components/admin/Fields';
 import { duplicateProjectAction } from '@/app/admin/actions';
 import { requireAdmin } from '@/lib/auth';
-import { getCategories, getProjects } from '@/lib/content';
+import { getAdminProjects } from '@/lib/content';
 import { pad } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
@@ -17,7 +17,7 @@ export default async function AdminProjectsPage({
 }) {
   await requireAdmin();
   const params = await searchParams;
-  const [projects, categories] = await Promise.all([getProjects({ includeDrafts: true }), getCategories()]);
+  const projects = await getAdminProjects();
 
   const isNew = params.edit === 'new';
   const editing = params.edit && !isNew ? projects.find((project) => project.id === params.edit) ?? null : null;
@@ -28,7 +28,7 @@ export default async function AdminProjectsPage({
       )
     : projects;
 
-  const categoryNames = [...new Set([...categories.map((c) => c.name), ...projects.map((p) => p.category)])];
+  const categoryNames = [...new Set(projects.map((project) => project.category))];
 
   return (
     <>

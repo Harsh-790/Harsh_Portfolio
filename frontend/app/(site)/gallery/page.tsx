@@ -2,14 +2,11 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import Gallery from '@/components/Gallery';
-import { getGallery } from '@/lib/content';
-import { getSettings } from '@/lib/settings';
+import { getGallery, getSettings } from '@/lib/public-content';
 import { pad } from '@/lib/types';
 
-export const dynamic = 'force-dynamic';
-
-export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSettings();
+export function generateMetadata(): Metadata {
+  const settings = getSettings();
   return {
     title: 'Gallery',
     description: settings['page.gallery.lead'],
@@ -17,8 +14,9 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function GalleryPage() {
-  const [items, settings] = await Promise.all([getGallery(), getSettings()]);
+export default function GalleryPage() {
+  const items = getGallery();
+  const settings = getSettings();
   const photos = items.filter((i) => i.type !== 'video').length;
   const videos = items.filter((i) => i.type === 'video').length;
 
